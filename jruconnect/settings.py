@@ -35,7 +35,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['jruconnect.com', 'www.jruconnect.com', '127.0.0.1', 'jruconnectdisplayapp.onrender.com', 'www.jruconnect.info', 'jruconnect.info']
 
-USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_HOST = False
 
 CSRF_TRUSTED_ORIGINS = [
     'https://jruconnect.com',
