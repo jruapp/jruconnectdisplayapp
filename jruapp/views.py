@@ -286,8 +286,6 @@ def view(request):
 
 
 def login(request):
-    
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -306,21 +304,25 @@ def login(request):
             return redirect('home')
         else:
             return render(request, 'views/login.html', {'error': 'Invalid credentials'})
+    
     elif request.user.is_authenticated:
-        if request.user.email:
-            
-            # Query the user by username
+        # Only try to access the email if the user is authenticated
+        if hasattr(request.user, 'email'):
+            # Query the user by email
             try:
                 user = User.objects.get(email=request.user.email, verified=1)
             except User.DoesNotExist:
                 return render(request, 'views/login.html')
-            # Ideally, use a password hashing library
-            if user:
-                request.session['admin_id'] = user.user_id  # Set session variable
-                request.session['full_name'] = f"{user.first_name} {user.middle_name} {user.last_name}"  # Set session variable
-                request.session['role'] = user.role 
-                return redirect('home')
-    return render(request, 'views/login.html', {'email' :request.user.email})
+            
+            # Set session variables
+            request.session['admin_id'] = user.user_id
+            request.session['full_name'] = f"{user.first_name} {user.middle_name} {user.last_name}"
+            request.session['role'] = user.role 
+            return redirect('home')
+    
+    # In case user is not authenticated or email doesn't exist
+    return render(request, 'views/login.html')
+
 
 
 
