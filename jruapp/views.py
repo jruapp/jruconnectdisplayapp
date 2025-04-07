@@ -312,7 +312,8 @@ def login(request):
             try:
                 user = User.objects.get(email=request.user.email, verified=1)
             except User.DoesNotExist:
-                emailnow = getattr(request.user, 'email', 'None')
+                logout(request)  # This will clear the session data and log out the user
+                google_logout_url = 'https://accounts.google.com/Logout'
                 return render(request, 'views/login.html', {'message_g' : 'You email does not exist in the system, register first' })
             
             # Set session variables
