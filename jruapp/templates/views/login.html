@@ -27,12 +27,21 @@
               <div class="brand-logo d-flex justify-content-center">
                 <img src="{% static 'images/favicon.png' %}" alt="logo">
               </div>
-              <h4 class="text-center">LOGIN NOW TO JRU-CONNECT E-COMMERCE WEBSITE!{{email2}}</h4>
+              <h4 class="text-center">LOGIN NOW TO JRU-CONNECT E-COMMERCE WEBSITE!</h4>
               <hr>
               <form class="pt-3" method="post">
                 {% csrf_token %}
                 <div class="form-group">
-                  <label for="username">JRU Email {{email}}</label>
+                     
+                {% if error %}
+                <p class="text-danger">{{ error }}</p>
+                <hr>
+              {% endif %}
+              {% if message_g %}
+              <p class="text-danger">{{ message_g }}</p>
+              <hr>
+            {% endif %}
+                  <label for="username">JRU Email </label>
                   <input type="text" class="form-control form-control-lg" name="username" placeholder="Email"  pattern=".+@my\.jru\.edu$">
                 </div>
                 <div class="form-group position-relative">
@@ -62,10 +71,7 @@
                     </a>
                   </div>
                 </div>
-                
-                {% if error %}
-                  <p class="text-danger">{{ error }}</p>
-                {% endif %}
+             
               </form>
             </div>
           </div>
