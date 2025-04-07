@@ -321,7 +321,7 @@ def login(request):
             return redirect('home')
     
     # In case user is not authenticated or email doesn't exist
-    return render(request, 'views/login.html', {email : request.user.email })
+    return render(request, 'views/login.html', {'email' : request.user.email })
 
 
 
