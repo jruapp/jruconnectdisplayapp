@@ -13,4 +13,4 @@ if __name__ == "__main__":
     run_command("python manage.py collectstatic --noinput")
 
     # Run migrations
-    run_command("python manage.py migrate")
+    run_command("gunicorn --bind 0.0.0.0:8000 jruconnect.wsgi:application")
