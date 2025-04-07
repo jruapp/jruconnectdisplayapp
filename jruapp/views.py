@@ -306,7 +306,7 @@ def login(request):
             return redirect('home')
         else:
             return render(request, 'views/login.html', {'error': 'Invalid credentials'})
-    elif request.user.is_authenticated
+    elif request.user.is_authenticated:
         if request.user.email:
             
             # Query the user by username
