@@ -305,7 +305,7 @@ def login(request):
         else:
             return render(request, 'views/login.html', {'error': 'Invalid credentials'})
     
-    elif request.user.is_authenticated:
+    if request.user.is_authenticated:
         # Only try to access the email if the user is authenticated
         if hasattr(request.user, 'email'):
             # Query the user by email
@@ -319,9 +319,10 @@ def login(request):
             request.session['full_name'] = f"{user.first_name} {user.middle_name} {user.last_name}"
             request.session['role'] = user.role 
             return redirect('home')
-    
+    emailnow = getattr(request.user, 'email', 'None')
+
     # In case user is not authenticated or email doesn't exist
-    return render(request, 'views/login.html', {'email' : request.user.email })
+    return render(request, 'views/login.html', {'email' : emailnow, 'email2' : 'tryemai' })
 
 
 
