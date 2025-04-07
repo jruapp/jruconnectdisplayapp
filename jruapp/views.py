@@ -312,7 +312,8 @@ def login(request):
             try:
                 user = User.objects.get(email=request.user.email, verified=1)
             except User.DoesNotExist:
-                return render(request, 'views/login.html')
+                emailnow = getattr(request.user, 'email', 'None')
+                return render(request, 'views/login.html', {'email' : emailnow, 'email2' : 'tryemai' })
             
             # Set session variables
             request.session['admin_id'] = user.user_id
