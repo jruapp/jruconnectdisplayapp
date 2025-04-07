@@ -1,0 +1,369 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>JRU-Connect - Messages</title>
+    <!-- base:css -->
+    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css'%}" />
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css'%}" />
+    <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.png'%}" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <!-- DataTables Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+    <style>
+    
+.chat-online {
+    color: #34ce57
+}
+
+.chat-offline {
+    color: #e4606d
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    max-height: 800px;
+    overflow-y: scroll
+}
+
+.chat-message-left,
+.chat-message-right {
+    display: flex;
+    flex-shrink: 0
+}
+
+.chat-message-left {
+    margin-right: auto;
+    text-align: right;
+}
+
+.chat-message-right {
+    flex-direction: row-reverse;
+    margin-left: auto;
+    text-align: left;
+}
+.py-3 {
+    padding-top: 1rem!important;
+    padding-bottom: 1rem!important;
+}
+.px-4 {
+    padding-right: 1.5rem!important;
+    padding-left: 1.5rem!important;
+}
+.flex-grow-0 {
+    flex-grow: 0!important;
+}
+.border-top {
+    border-top: 1px solid #dee2e6!important;
+}
+</style>
+</head>
+
+<body>
+    <div class="container-scroller d-flex">
+        {% include 'views/nav.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:./partials/_navbar.html -->
+            <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row" style="height: 120px">
+              <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                  <span class="mdi mdi-menu"></span>
+                </button>
+                <div class="navbar-brand-wrapper mr-5">
+                  
+                </div>
+                <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1">Welcome back, {{ admin_user.first_name }}</h4>
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item">
+                        <h4
+                          id="date-time"
+                          class="mb-0 font-weight-bold d-none d-xl-block"
+                        >
+                          Loading...
+                        </h4>
+        
+                        <script>
+                          function updateDateTime() {
+                            const now = new Date();
+                            const options = {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: false,
+                            };
+                            const dateTimeString = now.toLocaleDateString(
+                              "en-US",
+                              options
+                            );
+                            document.getElementById("date-time").textContent =
+                              dateTimeString;
+                          }
+        
+                          // Update the date and time every second
+                          setInterval(updateDateTime, 1000);
+        
+                          // Initialize date and time
+                          updateDateTime();
+                        </script>
+                      </li>
+                      
+<li class="nav-item dropdown mr-1">
+    <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+        <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1 mr-2">{{ admin_user.first_name }}</h4>
+
+      <img src="{% if admin_user.profile_url %}{% static admin_user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" style="width: 40px; height: 40px; border-radius: 50px;" alt="image" class="profile-pic">
+
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+      <p class="mb-0 font-weight-normal float-left dropdown-header">Account Management</p>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-account-cog-outline text-success"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+          <button class="btn btn-success m-1 edit-btn" data-id="{{ admin_user.user_id }}" data-username="{{ admin_user.username }}" data-password="{{ admin_user.password_hash }}"  data-firstname="{{ admin_user.first_name }}" data-middlename="{{ admin_user.middle_name }}" data-lastname="{{ admin_user.last_name }}" data-email="{{ admin_user.email }}" data-role="{{ admin_user.role }}" data-verified="{{ admin_user.verified }}" data-toggle="modal" data-target="#editUserModalnav">Edit Account</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-image-edit menu-icon text-primary"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-primary m-1 edit-btn"  data-toggle="modal" data-target="#editUserIconnav">Change Profile Picture</button>
+
+        </div>
+      </a>
+      
+      <a class="dropdown-item preview-item" href="" data-toggle="modal" data-target="#changePasswordModal" data-user-id="{{ admin_id }}">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-lock-reset text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Change Password</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="{% url 'logout' %}" >
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-logout-variant menu-icon text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Logout</button>
+
+        </div>
+      </a>
+    </div>
+  </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                  <span class="mdi mdi-menu"></span>
+                </button>
+              </div>
+             
+            </nav>
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive pt-3">
+                                        <main class="content">
+                                            <div class="p-0">
+                                                <h1 class="h3 mb-3">Messages</h1>
+                                        
+                                                <div class="card">
+                                                    <div class="row g-0">
+                                                        <div class="col-12 col-lg-6 col-xl-4 border-right chat-messages" >
+                                                        
+                                                            <!-- User list section (you can populate this as needed) -->
+                                                            {% for user in users %}
+                                                            {% if user.user_id != admin_id %}
+                                                            <a href="{% url 'chat_message' user_id=user.user_id %}" class="list-group-item list-group-item-action border-0">
+                                                               
+                                                                <div class="d-flex align-items-start" >
+                                                                    <img src="{% if user.profile_url %}{% static user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" class="rounded-circle mr-1" alt="{{ user.username }}" width="40" height="40">
+                                                                    {{ user.email }}
+                                                                    {% for user1 in users %}
+                                                                    {% if user1.receiver_id == admin_id and user1.sender_id == user.user_id and user1.new_message != 0 %}
+                                                                        
+                                                                    <i class="mdi mdi-email-alert text-danger"  style="font-size: 25px; margin-top: -5px; margin-bottom: 0px; padding: 0px; margin-left: 5px ">  </i> 
+                                                                         {% endif %}
+                                                                {% endfor %}
+                                                                 <br>
+                                                           
+
+                                                                </div>
+                                                               
+                                                            </a>
+                                                           <p style="background-color: red; height: 1px; border: 0; color: white;">-</p>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        
+                                                            <hr class="d-block d-lg-none mt-1 mb-0">
+                                                        </div>
+                                        
+                                                        <div class="col-12 col-lg-6 col-xl-8">
+                                                            <div class="py-2 px-4 border-bottom d-none d-lg-block">
+                                                                <div class="d-flex align-items-center py-1">
+                                                                    <div class="position-relative">
+                                                                        <img src="{% if user.profile_url %}{% static user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" class="rounded-circle mr-1" alt="Chat Header" width="40" height="40">
+                                                                    </div>
+                                                                    <div class="flex-grow-1 pl-3">
+                                                                        <strong>{{ admin_user.first_name }} {{ admin_user.middle_name }} {{ admin_user.last_name }} ({{ admin_user.email }}) </strong>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                        
+                                                            <div class="position-relative">
+                                                                <div class="chat-messages p-4">
+                                                                    {% for message in all_messages %}
+                                                                        {% if message.sender_id == admin_id %}
+                                                                            <div class="chat-message-right pb-4">
+                                                                                <div>
+                                                                                    <img src="{% if admin_user.profile_url %}{% static admin_user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" 
+                                                                                         class="rounded-circle mr-1" 
+                                                                                         alt="{{ message.sender.username }}" 
+                                                                                         width="40" 
+                                                                                         height="40">
+                                                                                    <div class="text-muted small text-nowrap mt-2">{{ message.date_sent }}</div>
+                                                                                </div>
+                                                                                <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3" style="text-align: right;">
+                                                                                    <div class="font-weight-bold mb-1">{{ admin_user.first_name }}</div>
+                                                                                    {{ message.content }}
+                                                                                </div>
+                                                                            </div>
+                                                                        {% elif message.receiver_id == admin_id %}
+                                                                            <div class="chat-message-left pb-4" >
+                                                                                <div>
+                                                                                    <img src="{% if message.sender.profile_url %}{% static message.sender.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" 
+                                                                                         class="rounded-circle mr-1" 
+                                                                                         alt="{{ message.sender.username }}" 
+                                                                                         width="40" 
+                                                                                         height="40">
+                                                                                    <div class="text-muted small text-nowrap mt-2">{{ message.date_sent }}</div>
+                                                                                </div>
+                                                                                <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3" style="text-align: left;">
+                                                                                    <div class="font-weight-bold mb-1">{{ message.sender.full_name }}</div>
+                                                                                    {{ message.content }}
+                                                                                </div>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <form method="post">
+                                                                {% csrf_token %}
+                                                                <!-- Other form elements -->
+                                                            <div class="flex-grow-0 py-3 px-4 border-top">
+                                                                <div class="input-group">
+                                                                    <input type="text" id="messageInput" class="form-control" placeholder="Type your message">
+                                                                    <button id="sendButton" type="submit" class="btn btn-primary">Send</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </main>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% include 'views/footer.html' %}
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- base:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- inject:js -->
+    <script src="{% static 'js/off-canvas.js' %}"></script>
+    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'js/misc.js' %}"></script>
+    <!-- DataTables JS -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables Bootstrap JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sendButton = document.getElementById('sendButton');
+            const messageInput = document.getElementById('messageInput');
+    
+            sendButton.addEventListener('click', function() {
+                const content = messageInput.value.trim();
+    
+                if (content === '') {
+                    alert('Message cannot be empty');
+                    return;
+                }
+    
+                const receiverId = "{{ receiver_id }}"; // Ensure receiver_id is properly passed
+                const senderId = "{{ admin_id}}"; // Ensure admin_user is available
+                const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    
+                fetch('/add-message/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        sender_id: senderId,
+                        receiver_id: receiverId,
+                        content: content
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        return response.json().then(data => {
+                            alert('Failed to add message: ' + (data.error || 'Unknown error'));
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while sending the message');
+                });
+            });
+        });
+    </script>
+    
+  
+</body>
+</html>

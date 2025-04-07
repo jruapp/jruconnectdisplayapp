@@ -1,0 +1,300 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>JRU-Connect Student Registration</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+  <!-- endinject -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" />
+  
+  <!-- Load jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  <script>
+    const filipinoBadWords = [
+        "amputa", "animal ka", "bilat", "binibrocha", "bobo", "bogo", "boto", 
+        "brocha", "burat", "bwesit", "bwisit", "demonyo ka", "engot", "etits", 
+        "gaga", "gagi", "gago", "habal", "hayop ka", "hayup", "hinampak", 
+        "hinayupak", "hindot", "hindutan", "hudas", "iniyot", "inutel", 
+        "inutil", "iyot", "kagaguhan", "kagang", "kantot", "kantotan", 
+        "kantut", "kantutan", "kaululan", "kayat", "kiki", "kikinginamo", 
+        "kingina", "kupal", "leche", "leching", "lechugas", "lintik", 
+        "nakakaburat", "nimal", "ogag", "olok", "pakingshet", "pakshet", 
+        "pakyu", "pesteng yawa", "poke", "poki", "pokpok", "poyet", 
+        "pu'keng", "pucha", "puchanggala", "puchangina", "puke", 
+        "puki", "pukinangina", "puking", "punyeta", "puta", "putang", 
+        "putang ina", "putangina", "putanginamo", "putaragis", "putragis", 
+        "puyet", "ratbu", "shunga", "sira ulo", "siraulo", "suso", 
+        "susu", "tae", "taena", "tamod", "tanga", "tangina", "taragis", 
+        "tarantado", "tete", "teti", "timang", "tinil", "tite", "titi", 
+        "tungaw", "ulol", "ulul", "ungas",  "2g1c", "2 girls 1 cup", "acrotomophilia", "alabama hot pocket", "alaskan pipeline", "anal", "anilingus", "anus", "apeshit",
+        "arsehole", "ass", "asshole", "assmunch", "auto erotic", "autoerotic", "babeland", "baby batter", "baby juice", "ball gag",
+        "ball gravy", "ball kicking", "ball licking", "ball sack", "ball sucking", "bangbros", "bangbus", "bareback", "barely legal",
+        "barenaked", "bastard", "bastardo", "bastinado", "bbw", "bdsm", "beaner", "beaners", "beaver cleaver", "beaver lips",
+        "beastiality", "bestiality", "big black", "big breasts", "big knockers", "big tits", "bimbos", "birdlock", "bitch",
+        "bitches", "black cock", "blonde action", "blonde on blonde action", "blowjob", "blow job", "blow your load", "blue waffle",
+        "blumpkin", "bollocks", "bondage", "boner", "boob", "boobs", "booty call", "brown showers", "brunette action", "bukkake",
+        "bulldyke", "bullet vibe", "bullshit", "bung hole", "bunghole", "busty", "butt", "buttcheeks", "butthole", "camel toe",
+        "camgirl", "camslut", "camwhore", "carpet muncher", "carpetmuncher", "chocolate rosebuds", "cialis", "circlejerk",
+        "cleveland steamer", "clit", "clitoris", "clover clamps", "clusterfuck", "cock", "cocks", "coprolagnia", "coprophilia",
+        "cornhole", "coon", "coons", "creampie", "cum", "cumming", "cumshot", "cumshots", "cunnilingus", "cunt", "darkie",
+        "date rape", "daterape", "deep throat", "deepthroat", "dendrophilia", "dick", "dildo", "dingleberry", "dingleberries",
+        "dirty pillows", "dirty sanchez", "doggie style", "doggiestyle", "doggy style", "doggystyle", "dog style", "dolcett",
+        "domination", "dominatrix", "dommes", "donkey punch", "double dong", "double penetration", "dp action", "dry hump",
+        "dvda", "eat my ass", "ecchi", "ejaculation", "erotic", "erotism", "escort", "eunuch", "fag", "faggot", "fecal",
+        "felch", "fellatio", "feltch", "female squirting", "femdom", "figging", "fingerbang", "fingering", "fisting", "foot fetish",
+        "footjob", "frotting", "fuck", "fuck buttons", "fuckin", "fucking", "fucktards", "fudge packer", "fudgepacker", "futanari",
+        "gangbang", "gang bang", "gay sex", "genitals", "giant cock", "girl on", "girl on top", "girls gone wild", "goatcx",
+        "goatse", "god damn", "gokkun", "golden shower", "goodpoop", "goo girl", "goregasm", "grope", "group sex", "g-spot",
+        "guro", "hand job", "handjob", "hard core", "hardcore", "hentai", "homoerotic", "honkey", "hooker", "horny", "hot carl",
+        "hot chick", "how to kill", "how to murder", "huge fat", "humping", "incest", "intercourse", "jack off", "jail bait",
+        "jailbait", "jelly donut", "jerk off", "jigaboo", "jiggaboo", "jiggerboo", "jizz", "juggs", "kike", "kinbaku", "kinkster",
+        "kinky", "knobbing", "leather restraint", "leather straight jacket", "lemon party", "livesex", "lolita", "lovemaking",
+        "make me come", "male squirting", "masturbate", "masturbating", "masturbation", "menage a trois", "milf", "missionary position",
+        "mong", "motherfucker", "mound of venus", "mr hands", "muff diver", "muffdiving", "nambla", "nawashi", "negro", "neonazi",
+        "nigga", "nigger", "nig nog", "nimphomania", "nipple", "nipples", "nsfw", "nsfw images", "nude", "nudity", "nutten",
+        "nympho", "nymphomania", "octopussy", "omorashi", "one cup two girls", "one guy one jar", "orgasm", "orgy", "paedophile",
+        "paki", "panties", "panty", "pedobear", "pedophile", "pegging", "penis", "phone sex", "piece of shit", "pikey", "pissing",
+        "piss pig", "pisspig", "playboy", "pleasure chest", "pole smoker", "ponyplay", "poof", "poon", "poontang", "punany",
+        "poop chute", "poopchute", "porn", "porno", "pornography", "prince albert piercing", "pthc", "pubes", "pussy", "queaf",
+        "queef", "quim", "raghead", "raging boner", "rape", "raping", "rapist", "rectum", "reverse cowgirl", "rimjob", "rimming",
+        "rosy palm", "rosy palm and her 5 sisters", "rusty trombone", "sadism", "santorum", "scat", "schlong", "scissoring", "semen",
+        "sex", "sexcam", "sexo", "sexy", "sexual", "sexually", "sexuality", "shaved beaver", "shaved pussy", "shemale", "shibari",
+        "shit", "shitblimp", "shitty", "shota", "shrimping", "skeet", "slanteye", "slut", "s&m", "smut", "snatch", "snowballing",
+        "sodomize", "sodomy", "spastic", "spic", "splooge", "splooge moose", "spooge", "spread legs", "spunk", "strap on",
+        "strapon", "strappado", "strip club", "style doggy", "suck", "sucks", "suicide girls", "sultry women", "swastika", 
+        "swinger", "tainted love", "taste my", "tea bagging", "threesome", "throating", "thumbzilla", "tied up", "tight white",
+        "tit", "tits", "titties", "titty", "tongue in", "topless", "tosser", "towelhead", "tranny", "tribadism", "tub girl", 
+        "tubgirl", "tushy", "twat", "twink", "twinkie", "two girls one cup", "undressing", "upskirt", "urethra play", "urophilia",
+        "vagina", "venus mound", "viagra", "vibrator", "violet wand", "vorarephilia", "voyeur", "voyeurweb", "voyuer", "vulva",
+        "wank", "wetback", "wet dream", "white power", "whore", "worldsex", "wrapping men", "wrinkled starfish", "xx", "xxx", 
+        "yaoi", "yellow showers", "yiffy", "zoophilia", "🖕"
+    ];
+
+    function validateInput(event) {
+      // Prevent form submission
+      event.preventDefault();
+
+      const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+      let hasBadWords = false;
+
+      // Check for Filipino bad words
+      for (const input of inputs) {
+        if (filipinoBadWords.some(badWord => input.value.toLowerCase().includes(badWord))) {
+          alert("Your input contains prohibited Filipino words. Please remove them.");
+          input.classList.add('invalid'); // Add red border
+          hasBadWords = true;
+        } else {
+          input.classList.remove('invalid'); // Remove red border
+        }
+      }
+
+  // Password matching validation
+  const password = document.getElementById('password').value;
+  const rpassword = document.getElementById('rpassword').value;
+
+      if (password !== rpassword) {
+        alert("Passwords do not match. Please re-enter them.");
+        document.getElementById('password').classList.add('invalid'); // Highlight password field
+        document.getElementById('rpassword').classList.add('invalid'); // Highlight confirm password field
+        return false;
+      } else {
+        document.getElementById('password').classList.remove('invalid');
+        document.getElementById('rpassword').classList.remove('invalid');
+      }
+
+      // If no bad words were detected, submit the form
+      if (!hasBadWords && (password === rpassword)) {
+        document.getElementById('registrationForm').submit(); // Programmatically submit the form
+      }
+    }
+
+    // Optional: Check input on change to immediately highlight
+    $("input[type='text'], input[type='email'], input[type='password']").on("input", function() {
+      const inputValue = $(this).val().toLowerCase();
+      if (filipinoBadWords.some(badWord => inputValue.includes(badWord))) {
+        $(this).addClass('invalid');
+      } else {
+        $(this).removeClass('invalid');
+      }
+    });
+  </script>
+
+  <style>
+    .invalid {
+      border: 2px solid red; /* Add red border for invalid inputs */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-scroller d-flex">
+    <div class="container-fluid page-body-wrapper full-page-wrapper d-flex">
+      <div class="content-wrapper d-flex align-items-center auth px-0">
+        <div class="row w-100 mx-0">
+          <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+              <div class="brand-logo d-flex justify-content-center">
+                <img src="{% static 'images/favicon.png' %}" alt="logo">
+              </div>
+              <h4 class="text-center">REGISTER AS STUDENT</h4>
+              <hr>
+              <form class="pt-3" id="registrationForm" method="post" enctype="multipart/form-data" onsubmit="validateInput(event)">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="user_id">User ID (Format XX-XXXXXX)</label>
+                  <input type="text" class="form-control form-control-lg" pattern="\d{2}-\d{6}" name="user_id" placeholder="User ID" required>
+                </div>
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" class="form-control form-control-lg" name="username" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                  <label for="first_name">First Name</label>
+                  <input type="text" class="form-control form-control-lg" name="first_name" placeholder="First Name" required>
+                </div>
+                <div class="form-group">
+                  <label for="middle_name">Middle Name</label>
+                  <input type="text" class="form-control form-control-lg" name="middle_name" placeholder="Middle Name" required>
+                </div>
+                <div class="form-group">
+                  <label for="last_name">Last Name</label>
+                  <input type="text" class="form-control form-control-lg" name="last_name" placeholder="Last Name" required>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email (Email must end with @my.jru.edu)</label>
+                  <input type="text" id="email" name="email" class="form-control form-control-lg"  placeholder="Enter your email" 
+                  pattern=".+@my\.jru\.edu$"
+ 
+         title="Email must end with @my.jru.edu" required>
+                </div>
+                <div class="form-group">
+                  <label for="password">Password (Must have one capital letter, one number and one special character</label>
+                  <div class="input-group">
+                    <input 
+                      type="password" 
+                      class="form-control" 
+                      id="password" 
+                      pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$"  
+                      name="password" 
+                      placeholder="Enter password" 
+                      required>
+                    <div class="input-group-append">
+                      <button 
+                        class="btn btn-outline-secondary toggle-password" 
+                        type="button" 
+                        data-target="#password">
+                        <i class="mdi mdi-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="rpassword">Re-Type Password</label>
+                  <div class="input-group">
+                    <input 
+                      type="password" 
+                      class="form-control" 
+                      id="rpassword" 
+                      pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$"  
+                      name="rpassword" 
+                      placeholder="Enter password" 
+                      required>
+                    <div class="input-group-append">
+                      <button 
+                        class="btn btn-outline-secondary toggle-password" 
+                        type="button" 
+                        data-target="#rpassword">
+                        <i class="mdi mdi-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="profile_image">Profile Image</label>
+                  <input type="file" class="form-control" name="profile_image" accept="image/*">
+                </div>
+
+      <!-- Enrollment form PDF upload -->
+      <div class="form-group">
+        <label for="enrollment_form">Upload Enrollment Form (PDF)</label>
+        <input type="file" name="enrollment_form" id="enrollment_form" accept=".pdf" class="form-control">
+      </div>
+
+                <div class="form-group">
+                  <label for="role">Course</label>
+                  <select name="role" id="role" class="form-control">
+                    <option value="BSIT">BSIT</option>
+                    <option value="BSCPE">BSCPE</option>
+                    <option value="BSCE">BSCE</option>
+                    <option value="BSME">BSME</option>
+                    <option value="BSEE">BSEE</option>
+                    <option value="BSN">BSN</option>
+                    <option value="BSBA">BSBA</option>
+                    <option value="BSCS">BSCS</option>
+                    <option value="BSHRM">BSHRM</option>
+                    <option value="BSA">BSA</option>
+                    <option value="Undecided">Undecided</option>
+                  </select>
+                  
+                </div>
+                
+                <div class="mt-3">
+                  <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">REGISTER</button>
+                </div>
+                {% if error %}
+                  <p class="text-danger">{{ error }}</p>
+                {% endif %}
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+
+  <script>
+    document.querySelectorAll('.toggle-password').forEach(button => {
+      button.addEventListener('click', function () {
+        const target = document.querySelector(this.getAttribute('data-target'));
+        const icon = this.querySelector('i');
+        
+        if (target.type === 'password') {
+          target.type = 'text';
+          icon.classList.remove('mdi-eye');
+          icon.classList.add('mdi-eye-off');
+        } else {
+          target.type = 'password';
+          icon.classList.remove('mdi-eye-off');
+          icon.classList.add('mdi-eye');
+        }
+      });
+    });
+  </script>    
+  
+  <!-- container-scroller -->
+  <!-- base:js -->
+  <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- inject:js -->
+  <script src="{% static 'js/off-canvas.js' %}"></script>
+  <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'js/template.js' %}"></script>
+  <!-- endinject -->
+</body>
+
+</html>
+
+

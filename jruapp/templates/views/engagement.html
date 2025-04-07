@@ -1,0 +1,397 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>JRU-Connect - Engagements</title>
+    <!-- base:css -->
+    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css'%}" />
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css'%}" />
+    <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.png'%}" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <!-- DataTables Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+</head>
+
+<body>
+    <div class="container-scroller d-flex">
+        {% include 'views/nav.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:./partials/_navbar.html -->
+            <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row" style="height: 120px">
+              <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                  <span class="mdi mdi-menu"></span>
+                </button>
+                <div class="navbar-brand-wrapper mr-5">
+                  
+                </div>
+                <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1">Welcome back, {{ admin_user.first_name }}</h4>
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item">
+                        <h4
+                          id="date-time"
+                          class="mb-0 font-weight-bold d-none d-xl-block"
+                        >
+                          Loading...
+                        </h4>
+        
+                        <script>
+                          function updateDateTime() {
+                            const now = new Date();
+                            const options = {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: false,
+                            };
+                            const dateTimeString = now.toLocaleDateString(
+                              "en-US",
+                              options
+                            );
+                            document.getElementById("date-time").textContent =
+                              dateTimeString;
+                          }
+        
+                          // Update the date and time every second
+                          setInterval(updateDateTime, 1000);
+        
+                          // Initialize date and time
+                          updateDateTime();
+                        </script>
+                      </li>
+                      
+<li class="nav-item dropdown mr-1">
+    <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+        <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1 mr-2">{{ admin_user.first_name }}</h4>
+
+      <img src="{% if admin_user.profile_url %}{% static admin_user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" style="width: 40px; height: 40px; border-radius: 50px;" alt="image" class="profile-pic">
+
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+      <p class="mb-0 font-weight-normal float-left dropdown-header">Account Management</p>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-account-cog-outline text-success"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+          <button class="btn btn-success m-1 edit-btn" data-id="{{ admin_user.user_id }}" data-username="{{ admin_user.username }}" data-password="{{ admin_user.password_hash }}"  data-firstname="{{ admin_user.first_name }}" data-middlename="{{ admin_user.middle_name }}" data-lastname="{{ admin_user.last_name }}" data-email="{{ admin_user.email }}" data-role="{{ admin_user.role }}" data-verified="{{ admin_user.verified }}" data-toggle="modal" data-target="#editUserModalnav">Edit Account</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-image-edit menu-icon text-primary"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-primary m-1 edit-btn"  data-toggle="modal" data-target="#editUserIconnav">Change Profile Picture</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="" data-toggle="modal" data-target="#changePasswordModal" data-user-id="{{ admin_id }}">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-lock-reset text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Change Password</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="{% url 'logout' %}" >
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-logout-variant menu-icon text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Logout</button>
+
+        </div>
+      </a>
+    </div>
+  </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                  <span class="mdi mdi-menu"></span>
+                </button>
+              </div>
+             
+            </nav>
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Engagements Table</h4>
+                                    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addEngagementModal">Add Engagement</button>
+                                    <div class="table-responsive pt-3">
+                                        <table class="table table-bordered" id="example">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>User</th>
+                                                    <th>Product</th>
+                                                    <th>Type</th>
+                                                    <th>Date Created</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for engagement in engagements %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ engagement.user.username }}</td>
+                                                    <td>{{ engagement.product.title }}</td>
+                                                    <td>{{ engagement.type }}</td>
+                                                    <td>{{ engagement.date_created }}</td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editEngagementModal" data-id="{{ engagement.engagement_id }}" data-user="{{ engagement.user.user_id }}" data-product="{{ engagement.product.product_id }}" data-type="{{ engagement.type }}">Edit</button>
+                                                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteEngagement({{ engagement.engagement_id }})">Delete</button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% include 'views/footer.html' %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Engagement Modal -->
+    <div class="modal fade" id="addEngagementModal" tabindex="-1" role="dialog" aria-labelledby="addEngagementModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addEngagementModalLabel">Add Engagement</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addEngagementForm">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="new_user">User</label>
+                            <select class="form-control" id="new_user" name="user" required>
+                                <option value="">Select User</option>
+                                {% for user in users %}
+                                    <option value="{{ user.user_id }}">{{ user.full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new_product">Product</label>
+                            <select class="form-control" id="new_product" name="product" required>
+                                <option value="">Select Product</option>
+                                {% for product in products %}
+                                    <option value="{{ product.product_id }}">{{ product.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new_type">Type</label>
+                            <select class="form-control" id="new_type" name="type" required>
+                                <option value="Like">Like</option>
+                                <option value="Click">Click</option>
+                                <!-- Add more types as needed -->
+                            </select>
+                        </div>
+                       
+                        <button type="button" class="btn btn-primary" onclick="addEngagement()">Add Engagement</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Engagement Modal -->
+  <!-- Edit Engagement Modal -->
+<div class="modal fade" id="editEngagementModal" tabindex="-1" role="dialog" aria-labelledby="editEngagementModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="editEngagementModalLabel">Edit Engagement</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <form id="editEngagementForm">
+              {% csrf_token %}
+              <input type="hidden" id="edit_id" name="id" />
+              <div class="modal-body">
+                  <div class="form-group">
+                      <label for="edit_user">User</label>
+                      <select class="form-control" id="edit_user" name="user" required>
+                          <option value="">Select User</option>
+                          {% for user in users %}
+                              <option value="{{ user.user_id }}" {% if user.user_id == selected_user_id %}selected{% endif %}>{{ user.full_name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="edit_product">Product</label>
+                      <select class="form-control" id="edit_product" name="product" required>
+                          <option value="">Select Product</option>
+                          {% for product in products %}
+                              <option value="{{ product.product_id }}" {% if product.product_id == selected_product_id %}selected{% endif %}>{{ product.title }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="edit_type">Type</label>
+                      <select class="form-control" id="edit_type" name="type" required>
+                          <option value="like" {% if selected_type == 'like' %}selected{% endif %}>Like</option>
+                          <option value="click" {% if selected_type == 'click' %}selected{% endif %}>Click</option>
+                          <!-- Add more types as needed -->
+                      </select>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" onclick="updateEngagement()">Save Changes</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+
+    <!-- base:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- inject:js -->
+    <script src="{% static 'js/off-canvas.js' %}"></script>
+    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'js/misc.js' %}"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables Bootstrap JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+
+        function deleteEngagement(engagementId) {
+            if (confirm('Are you sure you want to delete this engagement?')) {
+                const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+                fetch(`/delete-engagement/${engagementId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload(); // Reload the page to see the changes
+                    } else {
+                        alert('Error deleting engagement.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function addEngagement() {
+            const user = document.getElementById("new_user").value;
+            const product = document.getElementById("new_product").value;
+            const type = document.getElementById("new_type").value;
+            const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+            fetch("/add-engagement/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken,
+                },
+                body: JSON.stringify({
+                    user: user,
+                    product: product,
+                    type: type,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    window.location.reload(); // Reload the page to see the changes
+                } else {
+                    alert("Error adding engagement: " + data.message);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function updateEngagement() {
+            const id = document.getElementById("edit_id").value;
+            const user = document.getElementById("edit_user").value;
+            const product = document.getElementById("edit_product").value;
+            const type = document.getElementById("edit_type").value;
+            const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+            fetch(`/update-engagement/${id}/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken,
+                },
+                body: JSON.stringify({
+                    user: user,
+                    product: product,
+                    type: type,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    window.location.reload(); // Reload the page to see the changes
+                } else {
+                    alert("Error updating engagement: " + data.message);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        $('#editEngagementModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var id = button.data('id'); // Extract info from data-* attributes
+            var userId = button.data('user'); // Updated
+            var productId = button.data('product'); // Updated
+            var type = button.data('type'); 
+            
+            var modal = $(this);
+            modal.find('#edit_id').val(id);
+            
+            // Set selected values for user and product
+            modal.find('#edit_user').val(userId);
+            modal.find('#edit_product').val(productId);
+            modal.find('#edit_type').val(type);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,814 @@
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    {% for detail in engagement_summary %}  
+    <title>JRU-Connect - {{detail.title}}</title>
+    {% endfor %}  
+    <!-- base:css -->
+    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+    <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" />
+<!-- Bootstrap CSS -->
+
+<!-- Bootstrap Bundle JS (with Popper) -->
+
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+      .filter-section {
+        width: 400px;
+        margin-right: 20px;
+      }
+      
+      .filter-section h3 {
+        margin-bottom: 10px;
+      }
+      
+      .filter-section label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      
+      .product-container {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      
+      .main-content {
+        display: flex;
+        justify-content: space-between;
+      }
+      
+      .product {
+        flex: 0 0 23%; /* Adjust this value for responsiveness */
+        margin-bottom: 20px;
+      }
+      .hidden {
+        display: none;
+      }
+
+      body{
+        background:#eee;
+    }
+    
+    .card{
+        border:none;
+    
+        position:relative;
+        overflow:hidden;
+        border-radius:8px;
+        cursor:pointer;
+    }
+    
+    .card:before{
+        
+        content:"";
+        position:absolute;
+        left:0;
+        top:0;
+        width:4px;
+        height:100%;
+        background-color:#E1BEE7;
+        transform:scaleY(1);
+        transition:all 0.5s;
+        transform-origin: bottom
+    }
+    
+    .card:after{
+        
+        content:"";
+        position:absolute;
+        left:0;
+        top:0;
+        width:4px;
+        height:100%;
+        background-color:#8E24AA;
+        transform:scaleY(0);
+        transition:all 0.5s;
+        transform-origin: bottom
+    }
+    
+    .card:hover::after{
+        transform:scaleY(1);
+    }
+    
+    
+    .fonts{
+        font-size:11px;
+    }
+    
+    .social-list{
+        display:flex;
+        list-style:none;
+        justify-content:center;
+        padding:0;
+    }
+    
+    .social-list li{
+        padding:10px;
+        color:#8E24AA;
+        font-size:19px;
+    }
+    
+    
+    .buttons button:nth-child(1){
+           border:1px solid #8E24AA !important;
+           color:#8E24AA;
+           height:40px;
+    }
+    
+    .buttons button:nth-child(1):hover{
+           border:1px solid #8E24AA !important;
+           color:#fff;
+           height:40px;
+           background-color:#8E24AA;
+    }
+    
+    .buttons button:nth-child(2){
+           border:1px solid #8E24AA !important;
+           background-color:#8E24AA;
+           color:#fff;
+            height:40px;
+    }
+
+
+.dots{
+
+  height: 4px;
+width: 4px;
+margin-bottom: 2px;
+background-color: #bbb;
+border-radius: 50%;
+display: inline-block;
+}
+
+.badge{
+
+      padding: 7px;
+      padding-right: 9px;
+  padding-left: 16px;
+  box-shadow: 5px 6px 6px 2px #e9ecef;
+}
+
+.user-img{
+
+  margin-top: 4px;
+}
+
+.check-icon{
+
+  font-size: 17px;
+  color: #c3bfbf;
+  top: 1px;
+  position: relative;
+  margin-left: 3px;
+}
+
+.form-check-input{
+  margin-top: 6px;
+  margin-left: -24px !important;
+  cursor: pointer;
+}
+
+
+.form-check-input:focus{
+  box-shadow: none;
+}
+
+
+.icons i{
+
+  margin-left: 8px;
+}
+.reply{
+
+  margin-left: 12px;
+}
+
+.reply small{
+
+  color: #b7b4b4;
+
+}
+
+
+.reply small:hover{
+
+  color: green;
+  cursor: pointer;
+
+}
+
+
+.text-comment{
+  font-size: 25px;
+}
+
+
+.text-comment2{
+  font-size: 20px;
+}
+    </style>
+  </head>
+  <body>
+    <div class="modal fade" id="addFeedbackModal" tabindex="-1" role="dialog" aria-labelledby="addFeedbackModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="addFeedbackModalLabel">Add Feedback</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form id="addFeedbackForm">
+                      {% csrf_token %}
+                      <div class="form-group" style="display: none">
+                          <label for="new_user">User</label>
+                          <select class="form-control" id="new_user" name="user" required >
+                            <option value="" >Select User</option>
+                            {% for user in user_list %}
+                                <option {% if user.user_id == admin_id %} selected {% endif %} value="{{ user.user_id }}" {% if user.user_id == admin_id %} selected {% endif %}>
+                                    {{ user.full_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        
+                      </div>
+
+                      <div class="form-group">
+                          <label for="new_product">Product</label>
+                          <select class="form-control" id="new_product" name="product" required>
+                              <option value="">Select Product</option>
+                              {% for product in products %}
+                                  <option {% if product.product_id == product_id %} selected {% endif %} value="{{ product.product_id }}">{{ product.title }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+
+                      <div class="form-group">
+                          <label for="new_text">Feedback</label>
+                          <textarea class="form-control" id="new_text" name="content" required></textarea>
+                      </div>
+
+                      <div class="form-group">
+                          <label for="new_rating">Rating</label>
+                          <input type="number" class="form-control" id="new_rating" name="rating" min="1" max="5" required>
+                      </div>
+                     
+                      <button name="add_feedback" type="button" class="btn btn-primary" onclick="addFeedback()">Add Feedback</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+    <div class="container-scroller d-flex">
+      {% include 'views/nav.html' %}
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:./partials/_navbar.html -->
+        <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row" style="height: 120px">
+          <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+            <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"><span class="mdi mdi-menu"></span></button>
+            <div class="navbar-brand-wrapper mr-5"></div>
+            <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1">Welcome back, {{ admin_user.first_name }}</h4>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item">
+                <h4 id="date-time" class="mb-0 font-weight-bold d-none d-xl-block">Loading...</h4>
+
+                <script>
+                  function updateDateTime() {
+                    const now = new Date()
+                    const options = {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: false
+                    }
+                    const dateTimeString = now.toLocaleDateString('en-US', options)
+                    document.getElementById('date-time').textContent = dateTimeString
+                  }
+                  
+                  // Update the date and time every second
+                  setInterval(updateDateTime, 1000)
+                  
+                  // Initialize date and time
+                  updateDateTime()
+                </script>
+              </li>
+              <li class="nav-item dropdown mr-1">
+                <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+                  <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1 mr-2">{{ admin_user.first_name }}</h4>
+
+                  <img src="{% if admin_user.profile_url %}
+                      {% static admin_user.profile_url %}
+                    {% else %}
+                      {% static 'images/default.png' %}
+                    {% endif %}"
+                    style="width: 40px; height: 40px; border-radius: 50px;"
+                    alt="image"
+                    class="profile-pic" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+                  <p class="mb-0 font-weight-normal float-left dropdown-header">Account Management</p>
+                  <a class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <i class="mdi mdi-account-cog-outline text-success" style="font-size: 30px;"></i>
+                    </div>
+                    <div class="preview-item-content flex-grow">
+                      <button class="btn btn-success m-1 edit-btn" data-id="{{ admin_user.user_id }}" data-username="{{ admin_user.username }}" data-password="{{ admin_user.password_hash }}"  data-firstname="{{ admin_user.first_name }}" data-middlename="{{ admin_user.middle_name }}" data-lastname="{{ admin_user.last_name }}" data-email="{{ admin_user.email }}" data-role="{{ admin_user.role }}" data-verified="{{ admin_user.verified }}" data-toggle="modal" data-target="#editUserModalnav">Edit Account</button>
+                    </div>
+                  </a>
+                  <a class="dropdown-item preview-item">
+                    <div class="preview-thumbnail">
+                      <i class="mdi mdi-image-edit menu-icon text-primary" style="font-size: 30px;"></i>
+                    </div>
+                    <div class="preview-item-content flex-grow">
+                      <button class="btn btn-primary m-1 edit-btn" data-toggle="modal" data-target="#editUserIconnav">Change Profile Picture</button>
+                    </div>
+                  </a>
+                  <a class="dropdown-item preview-item" href="" data-toggle="modal" data-target="#changePasswordModal" data-user-id="{{ admin_id }}">
+                    <div class="preview-thumbnail"> 
+                      <i class="mdi mdi-lock-reset text-danger"  style="font-size: 30px;"></i>
+                    </div>
+                    
+                    <div class="preview-item-content flex-grow">
+                            <button class="btn btn-danger m-1 edit-btn"  data-toggle="modal" data-target="#changePasswordModal" data-user-id="{{ admin_id }}">Change Password</button>
+            
+                    </div>
+                  </a>
+                  <a class="dropdown-item preview-item" href="{% url 'logout' %}">
+                    <div class="preview-thumbnail">
+                      <i class="mdi mdi-logout-variant menu-icon text-danger" style="font-size: 30px;"></i>
+                    </div>
+                    <div class="preview-item-content flex-grow">
+                      <button class="btn btn-danger m-1 edit-btn">Logout</button>
+                    </div>
+                  </a>
+                </div>
+              </li>
+            </ul>
+            <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"><span class="mdi mdi-menu"></span></button>
+          </div>
+        </nav>
+
+        <div class="container-fluid" style="width: 100%; margin-left: 0px;">
+          <div class="main-panel">
+            <div class="content-wrapper">
+              {% for detail in engagement_summary %}      
+              
+    <div class="container mt-5">
+
+      <div class="row d-flex justify-content-center">
+          
+          <div class="col-md-12">
+              
+              <div class="card p-3 py-4">
+                  
+                <div >
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h2 class="modal-title" id="productModalLabel{{ detail.product_id }}">{{ detail.title }}</h2>
+                      </div>
+                      <div class="modal-body">
+                        
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                              <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                  <img src="{% if detail.image_url %}
+                              {% static detail.ads_url %}
+                            {% else %}
+                              {% static 'images/default.png' %}
+                            {% endif %}"
+                           onerror="this.onerror=null; this.src='{% static 'images/default.png' %}';"
+                            class="img-fluid rounded mb-3"
+                            style="height: 400px; object-fit: cover;"
+                            alt="{{ detail.title }}"  class="d-block w-100" />
+                                </div>
+                                <div class="carousel-item">
+                                  <img src="{% if detail.image_url %}
+                              {% static detail.image_url %}
+                            {% else %}
+                              {% static 'images/default.png' %}
+                            {% endif %}"
+                           onerror="this.onerror=null; this.src='{% static 'images/default.png' %}';"
+                            class="img-fluid rounded mb-3"
+                            style="height: 400px; object-fit: cover;"
+                            alt="{{ detail.title }}"  class="d-block w-100" />
+                                </div>
+                             
+                              </div>
+                              <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"  style="color: black;"></span>
+                                <span class="sr-only"  style="color: black;">Previous</span>
+                              </a>
+                              <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"  style="color: black;"></span>
+                                <span class="sr-only"  style="color: black;">Next</span>
+                              </a>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div style="background: #f3f3f3; padding: 10px; margin: 10px; color: darkblue; font-weight: bold;">
+                              <h1>PHP {{ detail.price }} </h1>
+                            </div>
+                            <p>{{ detail.description }}</p>
+                            <p>
+                              <strong>Category:</strong> {{ detail.category }}
+                            </p>
+                          
+                            <p>
+                              <strong>Location:</strong> {{ detail.location }}
+                            </p>
+                            <p>
+                              <strong>Date Posted:</strong> {{ detail.date_posted }}
+                            </p>
+                            <hr>
+                            
+                            {% if status_prod == 'none'%}
+                            <form method="post" onsubmit="window.location.href=window.location.href">
+                              {% csrf_token %}
+                            <button type="submit" name="purchase" class="btn btn-success mb-3">Avail Product</button>
+                            </form>
+                            {% endif %}
+
+                            {% if status_prod == 'approved'%}
+                            <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addFeedbackModal" onclick="changeByValue('{{ detail.product_id }}')">Review Product</button>
+                            {% endif %}
+                            
+                            {% if status_prod == 'declined'%}
+                            <button type="button" class="btn btn-danger mb-3 disabled" >Purchase Declined</button>
+                            {% endif %}
+                            
+                            {% if status_prod == 'pending'%}
+                            <button type="button" class="btn btn-success mb-3 disabled" >Purchase Pending Wait for Seller Approval</button>
+                            {% endif %}
+
+                          </div>
+                        </div>
+                      <div class="modal-footer">
+
+
+                        <button type="button"
+                        {% for engagement in all_eng %}
+                            {% if detail.product_id == engagement.product_id and engagement.type == 'like' and engagement.user_id == admin_id %}
+                                disabled
+                                
+                            {% endif %}
+                        {% endfor %}
+                        class="btn btn-primary"  id="like_btn"
+                        onclick="recordEngagement({{ detail.product_id }}, 'like')">
+                        Like
+                    </button>
+                    
+
+
+                        <a href="{% url 'chat_message' user_id=detail.user_id %}" class="btn btn-primary">Message Seller</a>
+                        <a href="{% url 'user_profile' user_profile_id=detail.user_id %}" class="btn btn-primary">View Seller Profile</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                  
+                 
+                  
+                  
+              </div>
+              
+          </div>
+          
+      </div>
+      
+  </div>
+  
+
+  <div class="container mt-5">
+
+    <div class="row  d-flex justify-content-center">
+
+        <div class="col-md-12">
+
+            <div class="headings d-flex justify-content-between align-items-center mb-3">
+                <h5>Unread comments(6)</h5>
+
+            </div>
+
+            {% for comment in feedback %}
+
+
+            <div class="card p-3 ">
+                <div class="d-flex justify-content-between align-items-center">
+              <div class="user d-flex flex-row align-items-center">
+                <img src="https://i.imgur.com/hczKIze.jpg" width="30" class="user-img rounded-circle mr-2">
+                <span class="text-comment"><small class="font-weight-bold text-primary">{{ comment.full_name}}</small>: </span>
+      
+              </div>
+              <small>{{ comment.feedback_date_created }}</small>
+              </div>
+              <div class="action d-flex justify-content-between mt-2 align-items-center">
+
+                <div class="px-4">
+                  <small  class="text-comment2" class="font-weight-bold">{{ comment.comment }}</small>
+                  {% if comment.user_id == admin_id %}
+                  <hr>
+                  <form method="post" onsubmit="return confirmDelete(event)">
+                    {% csrf_token %}
+                    <input type="text" style="display: none;" name="feedback_id" value="{{ comment.feedback_id }}">
+
+                    <button name="delete_feedback" class="btn btn-danger"  style="font-size: 17px; font-weight: bold;">Delete</button>
+                </form>
+                
+                <script>
+                function confirmDelete(event) {
+                    event.preventDefault(); // Stop form from submitting immediately
+                    let userConfirmed = confirm("Are you sure you want to destatus_prodlete this feedback?");
+                    if (userConfirmed) {
+                        event.target.submit(); // Submit the form if user clicks "Yes"
+                    }
+                }
+                </script>
+                
+                
+                
+{% endif %}
+                   
+                </div>
+
+                <div class="icons align-items-center">
+                    <i class="fa fa-star text-warning"></i>
+                    {{ comment.rating }} / 5
+                    
+                </div>
+                  
+              </div>
+              
+            </div>
+            <br>
+            {% endfor %}
+
+            
+        </div>
+        
+    </div>
+    
+</div>
+    {% endfor %}
+
+    <hr>
+              <div class="main-content">
+              
+                <!-- Product List -->
+                <div class="product-container col-md-12">
+                  {% for product in products %}
+                  {% if product.product_id != product_id %}
+                  
+                    <div class="product m-1" data-category="{{ product.category }}" data-price="{{ product.price }}">
+                      <div class="card shadow-sm">
+                        <div class="card-body">
+                          <div class="text-center">
+                            <div id="carouselExampleControls{{ product.product_id }}" class="carousel slide" data-ride="carousel">
+                              <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                  <img src="{% if product.image_url %}
+                              {% static product.ads_url %}
+                            {% else %}
+                              {% static 'images/default.png' %}
+                            {% endif %}"
+                           onerror="this.onerror=null; this.src='{% static 'images/default.png' %}';"
+                            class="img-fluid rounded mb-3"
+                            style="height: 200px; object-fit: cover;"
+                            alt="{{ product.title }}"  class="d-block w-100" />
+                                </div>
+                                <div class="carousel-item">
+                                  <img src="{% if product.image_url %}
+                              {% static product.image_url %}
+                            {% else %}
+                              {% static 'images/default.png' %}
+                            {% endif %}"
+                           onerror="this.onerror=null; this.src='{% static 'images/default.png' %}';"
+                            class="img-fluid rounded mb-3"
+                            style="height: 200px; object-fit: cover;"
+                            alt="{{ product.title }}"  class="d-block w-100" />
+                                </div>
+                             
+                              </div>
+                              <a class="carousel-control-prev" href="#carouselExampleControls{{ product.product_id }}" role="button" data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"  style="color: black;"></span>
+                                <span class="sr-only"  style="color: black;">Previous</span>
+                              </a>
+                              <a class="carousel-control-next" href="#carouselExampleControls{{ product.product_id }}" role="button" data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"  style="color: black;"></span>
+                                <span class="sr-only"  style="color: black;">Next</span>
+                              </a>
+                            </div>
+                          </div>
+                          <h6 class="text-dark mb-2">{{ product.title }}</h6>
+                          <p>
+                            <strong>Category:</strong> {{ product.category }}
+                          </p>
+                          <div class="d-flex justify-content-center mb-3 mt-4">
+                            <div class="p-2 mr-2">
+                              <h6>PHP {{ product.price }}</h6>
+                            </div>
+                            <div class="p-2 mr-2" style="border: 1px solid darkred; color: darkred; font-size: 13px; height: 35px;">
+                              <i class="mdi mdi-heart"></i> <strong>{{ product.likes_count }} Likes</strong>
+                            </div>
+                            <div class="p-2" style="border: 1px solid darkblue; font-size: 13px; height: 35px;">
+                              <strong><i class="mdi mdi-package-check"></i> {{ product.purchase_count }} Sold</strong>
+                            </div>
+                          </div>
+                          <button type="button" class="btn btn-primary w-100" data-toggle="modal" data-target="#productModal{{ product.product_id }}" onclick="recordEngagement({{ product.product_id }}, 'click')"><i class="mdi mdi-eye"></i> VIEW</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Product Modal -->
+                    <div class="modal fade" id="productModal{{ product.product_id }}" tabindex="-1" role="dialog" aria-labelledby="productModalLabel{{ product.product_id }}" aria-hidden="true">
+                      <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title" id="productModalLabel{{ product.product_id }}">{{ product.title }}</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          </div>
+                          <div class="modal-body">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <img src="{% if product.image_url %}
+                                    {% static product.image_url %}
+                                  {% else %}
+                                    {% static 'images/default.png' %}
+                                  {% endif %}"
+                                  class="img-fluid rounded mb-3"
+                                  alt="{{ product.title }}" />
+                              </div>
+                              <div class="col-md-6">
+                                <div style="background: #f3f3f3; padding: 10px; margin: 10px; color: darkblue;">
+                                  <h3>PHP {{ product.price }}</h3>
+                                </div>
+                                <p>{{ product.description }}</p>
+                                <p>
+                                  <strong>Category:</strong> {{ product.category }}
+                                </p>
+                                <p>
+                                  <strong>Stock:</strong> {{ product.stock }}
+                                </p>
+                                <p>
+                                  <strong>Location:</strong> {{ product.location }}
+                                </p>
+                                <p>
+                                  <strong>Date Posted:</strong> {{ product.date_posted }}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                         
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button"  class="btn btn-primary" onclick="recordEngagement({{ product.product_id }}, 'like')">Like</button>
+                            <a href="{% url 'chat_message' user_id=product.user_id %}" class="btn btn-success">Message Seller</a>
+                            {% if product.is_sold == 0 %}
+                            <button type="button" class="btn btn-primary w-100"  onclick="recordEngagement({{ product.product_id }}, 'click')"><i class="mdi mdi-eye"></i> VIEW</button>
+                            {% endif %}
+                            
+                            {% if product.is_sold == 1 %}
+                            <button type="button" class="btn btn-danger w-100"  disabled><i class="mdi mdi-cart-off"></i> PRODUCT IS SOLD</button>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- End of Product Modal -->
+                  {% endif %}
+                  {% endfor %}
+               
+                  <script>
+                    // Output the value of is_liked to the console
+                
+                    // Check if the value of is_liked is "True" (as a string)
+                    if ("{{ is_liked }}" === "True") {
+                    console.log("{{ is_liked }}");
+                        document.getElementById("like_btn").disabled = true;
+                        document.getElementById("like_btn").innerText = "Liked";
+                    }
+                </script>
+              
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CSRF Token -->
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+
+    <script>
+
+
+
+      function filterProducts() {
+        const minPrice = parseFloat(document.getElementById('min-price').value) || 0
+        const maxPrice = parseFloat(document.getElementById('max-price').value) || Infinity
+        const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked')).map((input) => input.value)
+      
+        const products = document.querySelectorAll('.product')
+        products.forEach((product) => {
+          const productCategory = product.getAttribute('data-category')
+          const productPrice = parseFloat(product.getAttribute('data-price'))
+      
+          const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(productCategory)
+          const matchesPrice = productPrice >= minPrice && productPrice <= maxPrice
+      
+          if (matchesCategory && matchesPrice) {
+            product.style.display = 'block'
+          } else {
+            product.style.display = 'none'
+          }
+        })
+      }
+    </script>
+    <script>
+      function recordEngagement(productId, type) {
+
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+        fetch('/record_engagement/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                'product_id': productId,
+                'type': type
+            })
+        })
+        .then(response => {
+            console.log('Raw response:', response);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+  function addFeedback() {
+      const user = document.getElementById("new_user").value;
+      const product = document.getElementById("new_product").value;
+      const text = document.getElementById("new_text").value;
+      const rating = document.getElementById("new_rating").value;
+      const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+      fetch("/add-feedback/", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrftoken,
+          },
+          body: JSON.stringify({
+              user: user,
+              product: product,
+              content: text,
+              rating: rating,
+          }),
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status === "success") {
+              window.location.reload(); // Reload the page to see the changes
+          } else {
+              alert("Error adding feedback: " + data.message);
+          }
+      })
+      .catch(error => console.error("Error:", error));
+  }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- inject:js -->
+    <script src="{% static 'js/off-canvas.js' %}"></script>
+    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'js/template.js' %}"></script>
+    <!-- endinject -->
+  </body>
+</html>

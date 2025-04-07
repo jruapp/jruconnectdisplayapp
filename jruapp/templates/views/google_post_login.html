@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Login Redirect</title>
+</head>
+<body>
+    <form id="emailForm" method="POST" action="">
+        {% csrf_token %}
+        <input type="hidden" name="email" value="{{ email }}">
+    </form>
+
+    <script>
+        // Auto-submit the form on page load
+        document.getElementById("emailForm").submit();
+    </script>
+</body>
+</html>

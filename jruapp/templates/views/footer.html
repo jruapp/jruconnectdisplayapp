@@ -1,0 +1,138 @@
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModalnav" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="editUserFormnav">
+          <input type="hidden" id="editUserId" value="{{ admin_user.user_id }}" name="user_id">
+          <div class="form-group">
+            <label for="editUsername">Username</label>
+            <input type="text" value="{{ admin_user.username }}" class="form-control" id="editUsername" name="username" required>
+          </div>
+          <div class="form-group">
+            <label for="editFName">Full Name</label>
+            <input type="text" class="form-control" value="{{ admin_user.first_name}}" id="editFName" name="full_name" required>
+          </div>
+          <div class="form-group">
+            <label for="editMName">Middle Name</label>
+            <input type="text" class="form-control" value="{{ admin_user.middle_name }}" id="editMName" name="middle_name" required>
+          </div>
+          <div class="form-group">
+            <label for="editLName">Last Name</label>
+            <input type="text" class="form-control" value="{{ admin_user.last_name}}" id="editLName" name="last_name" required>
+          </div>
+          <div class="form-group">
+            <label for="editEmail">Email</label>
+            <input type="email" class="form-control" id="editEmail" value="{{ admin_user.email }}" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="editPassword">Password</label>
+            <input type="text" class="form-control" id="editPassword" value="{{ admin_user.password_hash }}" name="password">
+          </div>
+          <div class="form-group">
+            <label for="editRole">Role</label>
+            <select class="form-control" id="editRole" name="role">
+              <option value="student" {% if admin_user.role == 'student' %}selected{% endif %}>Student</option>
+              <option value="admin" {% if admin_user.role == 'admin' %}selected{% endif %}>Admin</option>
+          </select>
+          
+          </div>
+          <div class="form-group">
+            <label for="editVerified">Verified</label>
+            <input type="checkbox"  {% if admin_user.verified == True %}checked{% endif %} id="editVerified" name="verified">
+          </div>
+          <button type="submit" class="btn btn-primary">Update User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Icon Modal -->
+<div class="modal fade" id="editUserIconnav" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editUserModalLabel">Change Profile Picture</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="editFormnav" enctype="multipart/form-data">
+          <input type="hidden" id="editUserId" value="{{ admin_user.user_id }}" name="user_id">
+          <div class="form-group">
+            <label for="editProfileImage">Profile Image</label>
+            <input type="file"  accept=".jpg, .jpeg, .png"  class="form-control" id="editProfileImage" name="profile_image" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Update User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<footer class="footer">
+    <div class="card">
+      <div class="card-body">
+        <div
+          class="d-sm-flex justify-content-center justify-content-sm-between"
+        >
+          <span
+            class="text-muted d-block text-center text-sm-left d-sm-inline-block"
+            >Framework: Django and Bootstrap</span
+          >
+          <span
+            class="text-muted d-block text-center text-sm-left d-sm-inline-block"
+            >Developed For: Jose RIxal University</span
+          >
+          <span
+            class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"
+          >
+           JRU-Connect</span
+          >
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('editFormnav').addEventListener('submit', function(event) {
+        event.preventDefault();
+    
+        var formData = new FormData(this);
+    
+        fetch('/update-profile-image/', { // URL to your Django view
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            alert(data.message);
+            $('#editUserIconnav').modal('hide'); // Hide the modal
+            window.location.href = window.location.href;
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    });
+    
+
+
+  </script>

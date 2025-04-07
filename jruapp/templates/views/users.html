@@ -1,0 +1,544 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>JRU-Connect - Users</title>
+    <!-- base:css -->
+    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css'%}" />
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css'%}" />
+    <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.png'%}" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <!-- DataTables Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+</head>
+
+<body>
+    <div class="container-scroller d-flex">
+        <!-- partial: {% static 'partials/_sidebar.html' %} -->
+        {% include 'views/nav.html' %}
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial: ./partials/_navbar.html -->
+            <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row" style="height: 120px">
+                <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                    <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                        <span class="mdi mdi-menu"></span>
+                    </button>
+                    <div class="navbar-brand-wrapper mr-5"></div>
+                    <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1">Welcome back, {{ full_name }}</h4>
+                    <ul class="navbar-nav navbar-nav-right">
+                      <li class="nav-item">
+                        <h4
+                          id="date-time"
+                          class="mb-0 font-weight-bold d-none d-xl-block"
+                        >
+                          Loading...
+                        </h4>
+        
+                        <script>
+                          function updateDateTime() {
+                            const now = new Date();
+                            const options = {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: false,
+                            };
+                            const dateTimeString = now.toLocaleDateString(
+                              "en-US",
+                              options
+                            );
+                            document.getElementById("date-time").textContent =
+                              dateTimeString;
+                          }
+        
+                          // Update the date and time every second
+                          setInterval(updateDateTime, 1000);
+        
+                          // Initialize date and time
+                          updateDateTime();
+                        </script>
+                      </li>
+                      
+<li class="nav-item dropdown mr-1">
+    <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+        <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1 mr-2">{{ admin_user.first_name }}</h4>
+
+      <img src="{% if admin_user.profile_url %}{% static admin_user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" style="width: 40px; height: 40px; border-radius: 50px;" alt="image" class="profile-pic">
+
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+      <p class="mb-0 font-weight-normal float-left dropdown-header">Account Management</p>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-account-cog-outline text-success"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+          <button class="btn btn-success m-1 edit-btn" data-id="{{ admin_user.user_id }}" data-username="{{ admin_user.username }}" data-password="{{ admin_user.password_hash }}"  data-firstname="{{ admin_user.first_name }}" data-middlename="{{ admin_user.middle_name }}" data-lastname="{{ admin_user.last_name }}" data-email="{{ admin_user.email }}" data-role="{{ admin_user.role }}" data-verified="{{ admin_user.verified }}" data-toggle="modal" data-target="#editUserModalnav">Edit Account</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-image-edit menu-icon text-primary"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-primary m-1 edit-btn"  data-toggle="modal" data-target="#editUserIconnav">Change Profile Picture</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="" data-toggle="modal" data-target="#changePasswordModal" data-user-id="{{ admin_id }}">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-lock-reset text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Change Password</button>
+
+        </div>
+      </a>
+      
+      <a class="dropdown-item preview-item" href="{% url 'logout' %}" >
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-logout-variant menu-icon text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Logout</button>
+
+        </div>
+      </a>
+    </div>
+  </li>
+                    </ul>
+                    <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                        <span class="mdi mdi-menu"></span>
+                    </button>
+                </div>
+            </nav>
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Users Table</h4>
+                                    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addUserModal">Add User</button>
+                                    <hr>
+                                    <div>
+                                      <label>Filter by Course:</label><br>
+                                      <input type="checkbox" id="course-bsit" value="BSIT"> BSIT<br>
+                                      <input type="checkbox" id="course-bscpe" value="BSCPE"> BSCPE<br>
+                                      <input type="checkbox" id="course-bsce" value="BSCE"> BSCE<br>
+                                      <input type="checkbox" id="course-bsme" value="BSME"> BSME<br>
+                                      <input type="checkbox" id="course-bsee" value="BSEE"> BSEE<br>
+                                      <input type="checkbox" id="course-bsn" value="BSN"> BSN<br>
+                                      <input type="checkbox" id="course-bsba" value="BSBA"> BSBA<br>
+                                      <input type="checkbox" id="course-bscs" value="BSCS"> BSCS<br>
+                                      <input type="checkbox" id="course-bshrm" value="BSHRM"> BSHRM<br>
+                                      <input type="checkbox" id="course-bsa" value="BSA"> BSA<br>
+                                  </div>
+                                  <br>
+                                  <div>
+                                      <label>Filter by Verification Status:</label><br>
+                                      <input type="checkbox" id="verified-status" value="Verified"> Verified<br>
+                                      <input type="checkbox" id="not-verified-status" value="Not Verified"> Not Verified<br>
+                                  </div>
+                                  <br>
+                                  
+                                  <button onclick="filterTable()" class="btn btn-success">Apply Filters</button>
+
+                                  <hr>
+                                  <div class="table-responsive pt-3">
+                                        <table class="table table-bordered" id="example">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Username</th>
+                                                    <th>Full Name</th>
+                                                    <th>Email</th>
+                                                    <th>Role</th>
+                                                    <th>Verified</th>
+                                                    <th>Course</th>
+                                                    <th>User Icon</th>
+                                                    <th>Enrollment <br>Form</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for user in users %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ user.username }}</td>
+                                                    <td>{{ user.full_name }}</td>
+                                                    <td>{{ user.email }}</td>
+                                                    <td>{{ user.get_role_display }}</td>
+                                                    <td>{{ user.verified }}</td>
+                                                    <td>{{ user.course }}</td>
+                                                    <td><img src="{% if user.profile_url %}{% static user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" style="width: 100px; height: 100px; " alt="image" ></td>
+                                                    <td><iframe src="{% if user.enrollment_url %}{% static user.enrollment_url %}{% else %}{% static 'images/default.png' %}{% endif %}" width="400px" height="200px"></iframe><br><a href="{% if user.enrollment_url %}{% static user.enrollment_url %}{% else %}{% static 'images/default.png' %}{% endif %}" download="{{ user.full_name }}.pdf">
+                                                      <button type="button" class="btn btn-success">Download PDF</button>
+                                                    </a></td>
+                                                    <td>
+                                                      
+
+                                                      <button class="btn btn-danger m-1 delete-btn" data-id="{{ user.user_id }}">Delete</button>
+                                                      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                                                      <hr>
+                                                {% if user.verified == 0  %}
+
+                                                      <button class="btn btn-success m-1 " class="btn btn-primary m-1" onclick="updateUserVerified({{ user.user_id }}, true)">Verify</button>
+                                                {% endif  %}
+                                                      
+                                                      <br>
+                                                {% if user.verified == 1  %}
+
+                                                      <button class="btn btn-danger m-1 "  class="btn btn-secondary m-1" onclick="updateUserVerified({{ user.user_id }}, false)">Unverify</button>
+                                                      {% endif  %}
+                        
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+                {% include 'views/footer.html' %}
+                <!-- partial -->
+            </div>
+
+<script>
+
+  $(document).ready(function() {
+    // Initialize the DataTable
+    var table = $('#example').DataTable();
+
+    // Custom filter function for course and verification status
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        // Get the course and verification status from the row data
+        const course = data[6].trim();
+        const isVerified = data[5].trim() === "True";
+
+        // Get selected courses
+        const selectedCourses = Array.from(document.querySelectorAll('input[type="checkbox"][id^="course-"]:checked'))
+                                      .map(checkbox => checkbox.value);
+
+        // Get verification status
+        const isVerifiedChecked = document.getElementById('verified-status').checked;
+        const isNotVerifiedChecked = document.getElementById('not-verified-status').checked;
+
+        // Check if row meets the selected filters
+        const matchesCourse = selectedCourses.length === 0 || selectedCourses.includes(course);
+        const matchesVerified = 
+            (!isVerifiedChecked && !isNotVerifiedChecked) || // Neither is checked, so always true
+            (isVerifiedChecked && isVerified) || // Verified checked and row is verified
+            (isNotVerifiedChecked && !isVerified); // Not Verified checked and row is not verified
+
+        // Return true if the row matches both filters; otherwise, false
+        return matchesCourse && matchesVerified;
+    });
+
+    // Define filterTable function separately
+    window.filterTable = function() {
+        table.draw(); // Redraw the table after applying filters
+    };
+});
+
+
+
+
+</script>
+
+        <!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="addUserForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="addUsername">Username</label>
+            <input type="text" class="form-control" id="addUsername" name="username" required>
+          </div>
+          <div class="form-group">
+            <label for="addFullName">Full Name</label>
+            <input type="text" class="form-control" id="addFullName" name="full_name" required>
+          </div>
+          <div class="form-group">
+            <label for="addEmail">Email</label>
+            <input type="email" class="form-control" id="addEmail" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="addPassword">Password</label>
+            <input type="password" class="form-control" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$"  id="addPassword" name="password" required>
+          </div>
+          <div class="form-group">
+            <label for="addPassword">Re-Type Password</label>
+            <input type="password" class="form-control" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$"  id="raddPassword" name="rpassword" required>
+          </div>
+          <div class="form-group">
+            <label for="addRole">Role</label>
+            <select class="form-control" id="addRole" name="role">
+              <option value="student">Student</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="addVerified">Verified</label>
+            <input type="checkbox" id="addVerified" name="verified">
+          </div>
+          <div class="form-group">
+            <label for="addProfileImage">Profile Image</label>
+            <input type="file"  accept=".jpg, .jpeg, .png"  class="form-control-file" id="addProfileImage" name="profile_image">
+          </div>
+          <button type="submit" class="btn btn-primary">Add User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for user in users %}
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal{{user.user_id}}" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="editUserForm{{user.user_id}}">
+          <input type="hidden" id="editUserId{{user.user_id}}" value="{{user.user_id}}" name="user_id">
+          <div class="form-group">
+            <label for="editUsername">Username</label>
+            <input type="text" class="form-control" value="{{user.username}}" id="editUsername{{user.user_id}}" name="username" required>
+          </div>
+          <div class="form-group">
+            <label for="editFullName">Full Name</label>
+            <input type="text" class="form-control" value="{{user.full_name}}" id="editFullName{{user.user_id}}" name="full_name" required>
+          </div>
+          <div class="form-group">
+            <label for="editEmail">Email</label>
+            <input type="email" class="form-control" value="{{user.email}}"  id="editEmail{{user.user_id}}" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="editPassword">Password</label>
+            <input type="text" class="form-control" value="{{user.password_hash}}" id="editPassword{{user.user_id}}" name="password">
+          </div>
+          <div class="form-group">
+            <label for="editRole">Role</label>
+            <select class="form-control" id="editRole{{user.user_id}}" name="role">
+              <option {% if user.role == "student" %} selected {%endif%} value="student">Student</option>
+              <option {% if user.role == "admin" %} selected {%endif%} value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editVerified">Verified</label>
+            <input {% if user.verified %} checked {%endif%} type="checkbox" id="editVerified{{user.user_id}}" name="verified" >
+          </div>
+          <button type="submit" class="btn btn-primary">Update User</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- base:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+
+
+
+    
+
+    function updateUserVerified(userId, verifiedStatus) {
+      if (confirm(`Are you sure you want to ${verifiedStatus ? 'verify' : 'unverify'} this user?`)) {
+          const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+  
+          fetch(`/user/${userId}/update-verified/`, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": csrftoken,
+              },
+              body: JSON.stringify({ verified: verifiedStatus }),
+          })
+          .then((response) => {
+              if (response.ok) {
+                  alert(`User ${verifiedStatus ? 'verified' : 'unverified'} successfully!`);
+                  window.location.reload(); // Reload the page to see the changes
+              } else {
+                  alert("Error updating user verification status.");
+              }
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+  }
+  
+
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#example').DataTable();
+
+            // Revision
+            $('#addUserForm').on('submit', function(e) {
+              e.preventDefault(); // Prevent the form from submitting immediately
+          
+              // Retrieve password values
+              const password = $('#addPassword').val();
+              const rpassword = $('#raddPassword').val();
+          
+              // Check if the passwords are the same
+              if (password != rpassword) {
+                  alert('The password and re-typed password must not be the same.');
+                  return; // Stop form submission
+              }
+              
+              else if (password === rpassword) {
+          
+              // Proceed with form submission if validation passes
+              let formData = new FormData(this); // Use FormData to handle file uploads
+          
+              fetch("{% url 'add_user' %}", {
+                  method: 'POST',
+                  body: formData,
+                  headers: {
+                      'X-CSRFToken': '{{ csrf_token }}'
+                  }
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.status === 'success') {
+                      location.reload();
+                  } else {
+                      alert(data.message);
+                  }
+              });
+            }
+          });
+          
+            
+
+
+            // Edit User
+            $('.edit-btn').on('click', function() {
+              let userId = $(this).data('id');
+              let username = $(this).data('username');
+              let fullName = $(this).data('fullname');
+              let email = $(this).data('email');
+              let role = $(this).data('role');
+              let verified = $(this).data('verified');
+              let password = $(this).data('password');
+          
+              // Populate the form inputs
+              $('#editUserId').val(userId);
+              $('#editUsername').val(username);
+              $('#editFullName').val(fullName);
+              $('#editEmail').val(email);
+              $('#editPassword').val(password);
+              $('#editRole').val(role);
+              $('#editVerified').prop('checked', verified);
+          });
+          
+          
+          {% for user in users %}
+
+            // Edit User
+$('#editUserForm{{user.user_id}}').on('submit', function(e) {
+  e.preventDefault();
+  let userId = $('#editUserId{{user.user_id}}').val();
+  let username = $('#editUsername{{user.user_id}}').val();
+  let fullName = $('#editFullName{{user.user_id}}').val();
+  let email = $('#editEmail{{user.user_id}}').val();
+  let password = $('#editPassword{{user.user_id}}').val(); // Optional
+  let role = $('#editRole{{user.user_id}}').val();
+  let verified = $('#editVerified{{user.user_id}}').is(':checked');
+
+  fetch(`/update-user/${userId}/`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({
+          username: username,
+          full_name: fullName,
+          email: email,
+          password: password, // Optional
+          role: role,
+          verified: verified
+      })
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.status === 'success') {
+          location.reload();
+      } else {
+          alert(data.message);
+      }
+  });
+});
+
+{% endfor %}
+
+            // Delete User
+            $('.delete-btn').on('click', function() {
+                let userId = $(this).data('id');
+                if (confirm("Are you sure you want to delete this user?")) {
+                    fetch(`/delete-user/${userId}/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            location.reload();
+                        } else {
+                            alert(data.message);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+
+
+
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+        <li class="nav-item sidebar-category">
+            <img src="{% static 'images/favicon.png' %}" alt="image" class="profile-pic" style="width: 100%; x">
+        </li>
+        <li class="nav-item sidebar-category">
+            <p>Home</p>
+            <span></span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+                <i class="mdi mdi-home menu-icon"></i>
+                <span class="menu-title">Home</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'advertisements' %}">
+                <i class="mdi mdi-cart menu-icon"></i>
+                <span class="menu-title">Advertisements</span>
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'chat_message' user_id=1 %}">
+                <i class="mdi mdi-message menu-icon"></i>
+                <span class="menu-title">Message </span>
+            </a>
+        </li>
+       
+       
+    
+        <li class="nav-item sidebar-category">
+            <p>Management</p>
+            <span></span>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                <i class="mdi mdi-account-group menu-icon"></i>
+                <span class="menu-title">Users</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="{% url 'users' %}">All Users</a></li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'products' %}">
+                <i class="mdi mdi-box menu-icon"></i>
+                <span class="menu-title">Products</span>
+            </a>
+        </li>
+
+        {% if role == "student" %}
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'products_student' %}">
+                <i class="mdi mdi-box menu-icon"></i>
+                <span class="menu-title">Products</span>
+            </a>
+        </li>
+        {% endif %}
+
+
+        {% if role == "admin" %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'engagements' %}">
+                <i class="mdi mdi-thumb-up menu-icon"></i>
+                <span class="menu-title">Engagements</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'feedbacks' %}">
+                <i class="mdi mdi-comment-text menu-icon"></i>
+                <span class="menu-title">Feedbacks</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'messages' %}">
+                <i class="mdi mdi-message menu-icon"></i>
+                <span class="menu-title">Messages</span>
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'support_inquiries' %}">
+                <i class="mdi mdi-help-circle menu-icon"></i>
+                <span class="menu-title">Support Inquiries</span>
+            </a>
+        </li>
+    <!-- Content for admin role goes here -->
+    
+    {% endif %}
+        
+    </ul>
+</nav>
+
+<script>
+    let username = '{{ admin_user.first_name }}';
+    
+
+    if (username === null || username === '') {
+    window.location.href = '{% url 'login' %}';
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+
+
+        // Edit User
+        // Edit User
+        $('#editUserFormnav').on('submit', function(e) {
+            e.preventDefault();
+            let userId = $('#editUserId').val();
+            let username = $('#editUsername').val();
+            let fName = $('#editFName').val();
+            let mName = $('#editMName').val();
+            let lName = $('#editLName').val();
+            let email = $('#editEmail').val();
+            let password = $('#editPassword').val(); // Optional
+            let role = $('#editRole').val();
+            let verified = $('#editVerified').is(':checked');
+            
+            fetch(`/update-user/${userId}/`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({
+                  username: username,
+                  first_name: fName,
+                  middle_name: mName,
+                  last_name: lName,
+                  email: email,
+                  password: password, // Optional
+                  role: role,
+                  verified: verified
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                  location.reload();
+              } else {
+                  alert(data.message);
+              }
+            });
+            });
+            
+
+
+        // Delete User
+        $('.delete-btn').on('click', function() {
+            let userId = $(this).data('id');
+            if (confirm("Are you sure you want to delete this user?")) {
+                fetch(`/delete-user/${userId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }
+        });
+    });
+
+
+    
+</script>
+
+{% csrf_token %}
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close"> X </button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <input type="hidden" id="user_id" name="user_id" value="">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        // Get the CSRF token from the cookie
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Check if this cookie string begins with the name we want
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        $('#changePasswordModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var userId = button.data('user-id'); // Extract info from data-* attributes
+            var modal = $(this);
+            modal.find('#user_id').val(userId); // Set user_id in the hidden input
+        });
+
+        $('#changePasswordForm').on('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            var formData = {
+                'password': $('#password').val(),
+                'user_id': $('#user_id').val(),
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/change-password/' + formData.user_id + '/',
+                data: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken // Include CSRF token in the request headers
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message);
+                        $('#changePasswordModal').modal('hide');
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred: ' + error);
+                }
+            });
+        });
+    });
+</script>

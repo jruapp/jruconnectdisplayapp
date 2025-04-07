@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Sign-In</title>
+</head>
+<body>
+
+<h2>Sign in with Google</h2>
+
+
+<a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}">Login with Google</a>
+
+
+
+</body>
+</html>

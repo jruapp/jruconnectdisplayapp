@@ -1,0 +1,411 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>JRU-Connect - Feedbacks</title>
+    <!-- base:css -->
+    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css'%}" />
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css'%}" />
+    <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.png'%}" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <!-- DataTables Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+</head>
+
+<body>
+    <div class="container-scroller d-flex">
+        {% include 'views/nav.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:./partials/_navbar.html -->
+            <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row" style="height: 120px">
+              <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                  <span class="mdi mdi-menu"></span>
+                </button>
+                <div class="navbar-brand-wrapper mr-5">
+                  
+                </div>
+                <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1">Welcome back, {{ admin_user.first_name }}</h4>
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item">
+                        <h4
+                          id="date-time"
+                          class="mb-0 font-weight-bold d-none d-xl-block"
+                        >
+                          Loading...
+                        </h4>
+        
+                        <script>
+                          function updateDateTime() {
+                            const now = new Date();
+                            const options = {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: false,
+                            };
+                            const dateTimeString = now.toLocaleDateString(
+                              "en-US",
+                              options
+                            );
+                            document.getElementById("date-time").textContent =
+                              dateTimeString;
+                          }
+        
+                          // Update the date and time every second
+                          setInterval(updateDateTime, 1000);
+        
+                          // Initialize date and time
+                          updateDateTime();
+                        </script>
+                      </li>
+                      
+<li class="nav-item dropdown mr-1">
+    <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+        <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1 mr-2">{{ admin_user.first_name }}</h4>
+
+      <img src="{% if admin_user.profile_url %}{% static admin_user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" style="width: 40px; height: 40px; border-radius: 50px;" alt="image" class="profile-pic">
+
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+      <p class="mb-0 font-weight-normal float-left dropdown-header">Account Management</p>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-account-cog-outline text-success"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+          <button class="btn btn-success m-1 edit-btn" data-id="{{ admin_user.user_id }}" data-username="{{ admin_user.username }}" data-password="{{ admin_user.password_hash }}"  data-firstname="{{ admin_user.first_name }}" data-middlename="{{ admin_user.middle_name }}" data-lastname="{{ admin_user.last_name }}" data-email="{{ admin_user.email }}" data-role="{{ admin_user.role }}" data-verified="{{ admin_user.verified }}" data-toggle="modal" data-target="#editUserModalnav">Edit Account</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-image-edit menu-icon text-primary"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-primary m-1 edit-btn"  data-toggle="modal" data-target="#editUserIconnav">Change Profile Picture</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="" data-toggle="modal" data-target="#changePasswordModal" data-user-id="{{ admin_id }}">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-lock-reset text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Change Password</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="{% url 'logout' %}" >
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-logout-variant menu-icon text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Logout</button>
+
+        </div>
+      </a>
+    </div>
+  </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                  <span class="mdi mdi-menu"></span>
+                </button>
+              </div>
+             
+            </nav>
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Feedbacks Table</h4>
+                                    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#addFeedbackModal">Add Feedback</button>
+                                    <div class="table-responsive pt-3">
+                                        <table class="table table-bordered" id="example">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>User</th>
+                                                    <th>Product</th>
+                                                    <th>Feedback</th>
+                                                    <th>Rate</th>
+                                                    <th>Date Created</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for feedback in feedbacks %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ feedback.user.username }}</td>
+                                                    <td>{{ feedback.product.title }}</td> <!-- Display product name -->
+                                                    <td>{{ feedback.comment }}</td> <!-- Updated field name -->
+                                                    <td>{{ feedback.rating }}</td> <!-- Updated field name -->
+                                                    <td>{{ feedback.date_created }}</td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editFeedbackModal" data-id="{{ feedback.feedback_id }}" data-user="{{ feedback.user.user_id }}" data-product="{{ feedback.product.product_id }}" data-text="{{ feedback.comment }}" data-rating="{{ feedback.rating }}">Edit</button>
+                                                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteFeedback({{ feedback.feedback_id }})">Delete</button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% include 'views/footer.html' %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Feedback Modal -->
+    <div class="modal fade" id="addFeedbackModal" tabindex="-1" role="dialog" aria-labelledby="addFeedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFeedbackModalLabel">Add Feedback</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addFeedbackForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="new_user">User</label>
+                            <select class="form-control" id="new_user" name="user" required>
+                                <option value="">Select User</option>
+                                {% for user in users %}
+                                    <option value="{{ user.user_id }}">{{ user.full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new_product">Product</label>
+                            <select class="form-control" id="new_product" name="product" required>
+                                <option value="">Select Product</option>
+                                {% for product in products %}
+                                    <option value="{{ product.product_id }}">{{ product.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new_text">Feedback</label>
+                            <textarea class="form-control" id="new_text" name="content" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new_rating">Rating</label>
+                            <input type="number" class="form-control" id="new_rating" name="rating" min="1" max="5" required>
+                        </div>
+                       
+                        <button type="button" class="btn btn-primary" onclick="addFeedback()">Add Feedback</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Feedback Modal -->
+<div class="modal fade" id="editFeedbackModal" tabindex="-1" role="dialog" aria-labelledby="editFeedbackModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="editFeedbackModalLabel">Edit Feedback</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <form id="editFeedbackForm">
+                  {% csrf_token %}
+                  <input type="hidden" id="edit_id" name="id" />
+                  
+                  <div class="form-group">
+                      <label for="edit_user">User</label>
+                      <select class="form-control" id="edit_user" name="user" required>
+                          <option value="">Select User</option>
+                          {% for user in users %}
+                              <option value="{{ user.user_id }}" {% if user.user_id == selected_user_id %}selected{% endif %}>{{ user.full_name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="edit_product">Product</label>
+                      <select class="form-control" id="edit_product" name="product" required>
+                          <option value="">Select Product</option>
+                          {% for product in products %}
+                              <option value="{{ product.product_id }}" {% if product.product_id == selected_product_id %}selected{% endif %}>{{ product.title }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="edit_text">Feedback</label>
+                      <textarea class="form-control" id="edit_text" name="content" required></textarea>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="edit_rating">Rating</label>
+                      <input type="number" class="form-control" id="edit_rating" name="rating" min="1" max="5" required>
+                  </div>
+                 
+                  <button type="button" class="btn btn-primary" onclick="updateFeedback()">Save Changes</button>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <!-- base:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <!-- endinject -->
+    <!-- inject:js -->
+    <script src="{% static 'js/off-canvas.js' %}"></script>
+    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'js/misc.js' %}"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables Bootstrap JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+
+
+    
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+
+        function deleteFeedback(feedbackId) {
+            if (confirm('Are you sure you want to delete this feedback?')) {
+                const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+                fetch(`/delete-feedback/${feedbackId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload(); // Reload the page to see the changes
+                    } else {
+                        alert('Error deleting feedback.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        function addFeedback() {
+            const user = document.getElementById("new_user").value;
+            const product = document.getElementById("new_product").value;
+            const text = document.getElementById("new_text").value;
+            const rating = document.getElementById("new_rating").value;
+            const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+            fetch("/add-feedback/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken,
+                },
+                body: JSON.stringify({
+                    user: user,
+                    product: product,
+                    content: text,
+                    rating: rating,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    window.location.reload(); // Reload the page to see the changes
+                } else {
+                    alert("Error adding feedback: " + data.message);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function updateFeedback() {
+            const id = document.getElementById("edit_id").value;
+            const user = document.getElementById("edit_user").value;
+            const product = document.getElementById("edit_product").value;
+            const text = document.getElementById("edit_text").value;
+            const rating = document.getElementById("edit_rating").value;
+            const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+            fetch(`/update-feedback/${id}/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken,
+                },
+                body: JSON.stringify({
+                    user: user,
+                    product: product,
+                    content: text,
+                    rating: rating,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    window.location.reload(); // Reload the page to see the changes
+                } else {
+                    alert("Error updating feedback: " + data.message);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        $('#editFeedbackModal').on('show.bs.modal', function (event) {
+          var button = $(event.relatedTarget); // Button that triggered the modal
+          var id = button.data('id'); 
+          var userId = button.data('user'); 
+          var productId = button.data('product');
+          var text = button.data('text');
+          var rating = button.data('rating');
+          
+          console.log("Edit Modal Data:", { id, userId, productId, text, rating }); // Add this line for debugging
+      
+          var modal = $(this);
+          modal.find('#edit_id').val(id);
+          modal.find('#edit_user').val(userId); // Set user ID in the dropdown
+          modal.find('#edit_product').val(productId); // Set product ID in the dropdown
+          modal.find('#edit_text').val(text);
+          modal.find('#edit_rating').val(rating);
+      });
+      
+      
+    </script>
+</body>
+</html>

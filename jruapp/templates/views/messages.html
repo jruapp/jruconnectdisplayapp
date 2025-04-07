@@ -1,0 +1,396 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>JRU-Connect - Messages</title>
+    <!-- base:css -->
+    <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}" />
+    <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <!-- DataTables Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css '%}">
+</head>
+<body>
+    <div class="container-scroller d-flex">
+        {% include 'views/nav.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:./partials/_navbar.html -->
+            <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row" style="height: 120px">
+              <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                  <span class="mdi mdi-menu"></span>
+                </button>
+                <div class="navbar-brand-wrapper mr-5">
+                  
+                </div>
+                <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1">Welcome back, {{ admin_user.first_name }}</h4>
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item">
+                        <h6
+                          id="date-time"
+                          class="mb-0 font-weight-bold d-none d-xl-block "
+                        >
+                          Loading...
+                        </h6>
+        
+                        <script>
+                          function updateDateTime() {
+                            const now = new Date();
+                            const options = {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: false,
+                            };
+                            const dateTimeString = now.toLocaleDateString(
+                              "en-US",
+                              options
+                            );
+                            document.getElementById("date-time").textContent =
+                              dateTimeString;
+                          }
+        
+                          // Update the date and time every second
+                          setInterval(updateDateTime, 1000);
+        
+                          // Initialize date and time
+                          updateDateTime();
+                        </script>
+                      </li>
+                      
+<li class="nav-item dropdown mr-1">
+    <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+        <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1 mr-2">{{ admin_user.first_name }}</h4>
+
+      <img src="{% if admin_user.profile_url %}{% static admin_user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" style="width: 40px; height: 40px; border-radius: 50px;" alt="image" class="profile-pic">
+
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+      <p class="mb-0 font-weight-normal float-left dropdown-header">Account Management</p>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-account-cog-outline text-success"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+          <button class="btn btn-success m-1 edit-btn" data-id="{{ admin_user.user_id }}" data-username="{{ admin_user.username }}" data-password="{{ admin_user.password_hash }}"  data-firstname="{{ admin_user.first_name }}" data-middlename="{{ admin_user.middle_name }}" data-lastname="{{ admin_user.last_name }}" data-email="{{ admin_user.email }}" data-role="{{ admin_user.role }}" data-verified="{{ admin_user.verified }}" data-toggle="modal" data-target="#editUserModalnav">Edit Account</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-image-edit menu-icon text-primary"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-primary m-1 edit-btn"  data-toggle="modal" data-target="#editUserIconnav">Change Profile Picture</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="" data-toggle="modal" data-target="#changePasswordModal" data-user-id="{{ admin_id }}">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-lock-reset text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Change Password</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="{% url 'logout' %}" >
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-logout-variant menu-icon text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Logout</button>
+
+        </div>
+      </a>
+    </div>
+  </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                  <span class="mdi mdi-menu"></span>
+                </button>
+              </div>
+             
+            </nav>
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Messages Table</h4>
+                                    <button class="btn btn-success mb-3" data-toggle="modal" data-target="#addMessageModal">Add Message</button>
+                                    <div class="table-responsive pt-3">
+                                        <table class="table table-bordered" id="example">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Sender</th>
+                                                    <th>Receiver</th>
+                                                    <th>Content</th>
+                                                    <th>Date Sent</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for message in messages %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ message.sender.full_name }}</td>
+                                                    <td>{{ message.receiver.full_name }}</td>
+                                                    <td>{{ message.content }}</td>
+                                                    <td>{{ message.date_sent }}</td>
+                                                    <td>
+                                                        <button class="btn btn-primary m-1"
+                                                        onclick="dataModal(event)"
+                                                        data-toggle="modal" data-target="#editMessageModal" 
+                                                                data-id="{{ message.message_id }}" 
+                                                                data-content="{{ message.content }}" 
+                                                                data-sender="{{ message.sender_id }}" 
+                                                                data-receiver="{{ message.receiver_id }}">Edit</button>
+                                                        <button class="btn btn-danger m-1" onclick="deleteMessage({{ message.message_id }})">Delete</button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% include 'views/footer.html' %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Message Modal -->
+    <div class="modal fade" id="addMessageModal" tabindex="-1" role="dialog" aria-labelledby="addMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addMessageModalLabel">Add Message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addMessageForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="addMessageSender">Sender</label>
+                            <select class="form-control" id="addMessageSender" name="sender_id">
+                                <!-- Populate with users -->
+                                {% for user in users %}
+                                <option value="{{ user.user_id }}">{{ user.full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="addMessageReceiver">Receiver</label>
+                            <select class="form-control" id="addMessageReceiver" name="receiver_id">
+                                <!-- Populate with users -->
+                                {% for user in users %}
+                                <option value="{{ user.user_id }}">{{ user.full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="addMessageContent">Content</label>
+                            <textarea class="form-control" id="addMessageContent" name="content"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Message Modal -->
+    <div class="modal fade" id="editMessageModal" tabindex="-1" role="dialog" aria-labelledby="editMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editMessageModalLabel">Edit Message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editMessageForm">
+                        {% csrf_token %}
+                        <!-- Hidden input for message ID -->
+                        <input type="hidden" id="editMessageId" name="id">
+
+                        <!-- Sender Selection -->
+                        <div class="form-group">
+                            <label for="editMessageSender">Sender</label>
+                            <select class="form-control" id="editMessageSender" name="sender_id">
+                                <!-- Populate with users -->
+                                {% for user in users %}
+                                <option value="{{ user.user_id }}" {% if user.user_id == selected_sender_id %}selected{% endif %}>{{ user.full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Receiver Selection -->
+                        <div class="form-group">
+                            <label for="editMessageReceiver">Receiver</label>
+                            <select class="form-control" id="editMessageReceiver" name="receiver_id">
+                                <!-- Populate with users -->
+                                {% for user in users %}
+                                <option value="{{ user.user_id }}" {% if user.user_id == selected_receiver_id %}selected{% endif %}>{{ user.full_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Message Content -->
+                        <div class="form-group">
+                            <label for="editMessageContent">Content</label>
+                            <textarea class="form-control" id="editMessageContent" name="content"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary">Update Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <!-- base:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+    
+    <script>
+      $(document).ready(function () {
+        // Initialize DataTable
+        $('#example').DataTable();
+
+        // Bind addMessage to the form submit event
+        $('#addMessageForm').submit(function (e) {
+            e.preventDefault();
+            addMessage();
+        });
+
+        
+    });
+    
+
+    // Function to delete a message
+    function deleteMessage(messageId) {
+        if (confirm('Are you sure you want to delete this message?')) {
+            const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+            fetch(`/delete-message/${messageId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to delete message');
+                }
+            });
+        }
+    }
+
+    // Function to add a message
+    function addMessage() {
+        const senderId = document.querySelector('#addMessageSender').value;
+        const receiverId = document.querySelector('#addMessageReceiver').value;
+        const content = document.querySelector('#addMessageContent').value;
+        const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    
+        fetch('/add-message/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ sender_id: senderId, receiver_id: receiverId, content: content })
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Failed to add message');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
+    // Function to update a message
+    $('#editMessageForm').submit(function (e) {
+        e.preventDefault();
+
+        const id = document.querySelector('#editMessageId').value;
+        const senderId = document.querySelector('#editMessageSender').value;
+        const receiverId = document.querySelector('#editMessageReceiver').value;
+        const content = document.querySelector('#editMessageContent').value;
+        const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+        fetch(`/update-message/${id}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({ sender_id: senderId, receiver_id: receiverId, content: content })
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Failed to update message');
+            }
+        });
+    });
+
+
+    // Fill in the edit modal with the selected message's data
+    function dataModal(event) {
+        var button = $(event.target); // Use target instead of relatedTarget
+        var id = button.data('id');
+        var senderId = button.data('sender');
+        var receiverId = button.data('receiver');
+        var content = button.data('content');
+    
+        console.log({ id, senderId, receiverId, content });
+    
+        // Populate the form fields
+        $('#editMessageId').val(id);
+        $('#editMessageSender').val(senderId);
+        $('#editMessageReceiver').val(receiverId);
+        $('#editMessageContent').val(content);
+    }
+    
+    </script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>JRU-Connect - Get Started</title>
+    <!-- base:css -->
+    <link
+      rel="stylesheet"
+      href="{% static 'vendors/mdi/css/materialdesignicons.min.css'%}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'vendors/css/vendor.bundle.base.css'%}"
+    />
+    <!-- endinject -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/style.css'%}" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.png'%}" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- DataTables CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"
+    />
+    <!-- DataTables Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+  </head>
+
+  <body>
+
+      
+
+
+    <div class="container-scroller d-flex">
+      <!-- partial:{% static 'partials/_sidebar.html -->
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:./partials/_navbar.html -->
+        <nav
+          class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row"
+          style="height: 120px"
+        >
+          <div
+            class="navbar-menu-wrapper d-flex align-items-center justify-content-end"
+          >
+            <button
+              class="navbar-toggler navbar-toggler align-self-center"
+              type="button"
+              data-toggle="minimize"
+            >
+              <span class="mdi mdi-menu"></span>
+            </button>
+            <div class="navbar-brand-wrapper mr-5"></div>
+            <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1">
+              Welcome back, {{ full_name }}
+            </h4>
+            <ul class="navbar-nav navbar-nav-right">
+              <li class="nav-item">
+                <h4
+                  id="date-time"
+                  class="mb-0 font-weight-bold d-none d-xl-block"
+                >
+                  Loading...
+                </h4>
+
+                <script>
+                  function updateDateTime() {
+                    const now = new Date();
+                    const options = {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: false,
+                    };
+                    const dateTimeString = now.toLocaleDateString(
+                      "en-US",
+                      options
+                    );
+                    document.getElementById("date-time").textContent =
+                      dateTimeString;
+                  }
+
+                  // Update the date and time every second
+                  setInterval(updateDateTime, 1000);
+
+                  // Initialize date and time
+                  updateDateTime();
+                </script>
+              </li>
+              
+<li class="nav-item dropdown mr-1">
+    <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+        <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1 mr-2">{{ admin_user.full_name }}</h4>
+
+      <img src="{% if admin_user.profile_url %}{% static admin_user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" style="width: 40px; height: 40px; border-radius: 50px;" alt="image" class="profile-pic">
+
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+      <p class="mb-0 font-weight-normal float-left dropdown-header">Account Management</p>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-account-cog-outline text-success"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+          <button class="btn btn-success m-1 edit-btn" data-id="{{ admin_user.user_id }}" data-username="{{ admin_user.username }}" data-password="{{ admin_user.password_hash }}" data-fullname="{{ admin_user.full_name }}" data-email="{{ admin_user.email }}" data-role="{{ admin_user.role }}" data-verified="{{ admin_user.verified }}" data-toggle="modal" data-target="#editUserModalnav">Edit Account</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-image-edit menu-icon text-primary"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-primary m-1 edit-btn"  data-toggle="modal" data-target="#editUserIconnav">Change Profile Picture</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="" data-toggle="modal" data-target="#changePasswordModal" data-user-id="{{ admin_id }}">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-lock-reset text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Change Password</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="{% url 'logout' %}" >
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-logout-variant menu-icon text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Logout</button>
+
+        </div>
+      </a>
+    </div>
+  </li>
+            </ul>
+            <button
+              class="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
+              type="button"
+              data-toggle="offcanvas"
+            >
+              <span class="mdi mdi-menu"></span>
+            </button>
+          </div>
+        </nav>
+        <!-- partial -->
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="row">
+              <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel"  style="background-color: black;">
+                      <ol class="carousel-indicators">
+                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                      </ol>
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <div class="card m-2 mb-5" style="width: 18rem;">
+                            <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
+                            <div class="card-body">
+                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="carousel-item">
+                          <div class="card m-2 mb-5" style="width: 18rem;">
+                            <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
+                            <div class="card-body">
+                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="carousel-item">
+                          <div class="row">
+                          <div class="col-md-4">
+                          <div class="card m-2 mb-5" style="width: 90%;">
+                            <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
+                            <div class="card-body">
+                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            </div>
+                          </div>
+                        </div>
+                          <div class="col-md-4">
+                          <div class="card m-2" style="width: 90%;">
+                            <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
+                            <div class="card-body">
+                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            </div>
+                          </div>
+                        </div>
+                          <div class="col-md-4">
+                            <div class="card m-2" style="width: 90%;">
+                              <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
+                              <div class="card-body">
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                              </div>
+                          </div>
+                          </div>
+                        </div>
+                        </div>
+                        </div>
+                      </div>
+                      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- content-wrapper ends -->
+          {% include 'views/footer.html' %}
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- base:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script>
+      function deleteProduct(productId) {
+        if (confirm("Are you sure you want to delete this product?")) {
+          const csrftoken = document.querySelector(
+            "[name=csrfmiddlewaretoken]"
+          ).value;
+
+          fetch(`/delete_product/${productId}/`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                window.location.reload(); // Reload the page to see the changes
+              } else {
+                alert("Error deleting product.");
+              }
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+      }
+
+
+
+      function addProduct() {
+        const form = document.getElementById('addProductForm');
+        const formData = new FormData(form);  // Use FormData to gather form inputs, including the file
+    
+        const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    
+        fetch("/add_product/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrftoken
+            },
+            body: formData  // Send the FormData object
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                window.location.href = "";  // Reload the page to see the changes
+            } else {
+                alert("Error adding product: " + data.message);
+            }
+        })
+        .catch((error) => console.error("Error:", error));
+    }
+    
+
+      $(document).ready(function () {
+        $("#example").DataTable();
+      });
+
+      function updateProduct(productId) {
+        const title = document.getElementById(`title${productId}`).value;
+        const description = document.getElementById(`description${productId}`).value;
+        const category = document.getElementById(`category${productId}`).value;
+        const price = document.getElementById(`price${productId}`).value;
+        const location = document.getElementById(`location${productId}`).value;
+  
+        
+        const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+      
+        fetch(`/update_product/${productId}/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+          body: JSON.stringify({
+            title: title,
+            description: description,
+            category: category,
+            price: price,
+            location: location
+          }),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "success") {
+            window.location.href = ""; // Reload the page to see the changes
+          } else {
+            alert("Error updating product: " + data.message);
+          }
+        })
+        .catch((error) => console.error("Error:", error));
+      }
+      
+
+      $(document).ready(function () {
+        $("#example").DataTable();
+      });
+    </script>
+
+    <script>
+      function updateStatus(productId, status) {
+        fetch(`/products/update_status/${productId}/${status}/`, {
+          method: 'GET',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert(`Product status updated to: ${data.status}`);
+            location.reload();  // Reload the page to show the updated status
+          }
+        })
+        .catch(error => console.error('Error:', error));
+        window.location.href = window.location.href;
+      }
+
+      function updateStatus1(productId, status, reason) {
+        fetch(`/products/update_status_r/${productId}/${status}/${reason}/`, {
+          method: 'GET',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert(`Product status updated to: ${data.status}`);
+            location.reload();  // Reload the page to show the updated status
+          }
+        })
+        .catch(error => console.error('Error:', error));
+        window.location.href = window.location.href;
+      }
+    </script>
+
+    <script>
+      function markAsSold(productId) {
+          const csrfToken = '{{ csrf_token }}'; // CSRF token for POST request
+
+          $.ajax({
+              url: `/product/mark_as_sold/${productId}/`,
+              type: 'POST',
+              headers: {
+                  'X-CSRFToken': csrfToken,
+              },
+              success: function(response) {
+                  if (response.success) {
+                      alert(response.message);
+                      // Optionally, reload the product list or update the UI as needed
+                      location.reload(); // Reloads the page
+                  } else {
+                      alert(response.message);
+                  }
+              },
+              error: function(xhr) {
+                  alert('An error occurred: ' + xhr.statusText);
+              }
+          });
+      }
+      function markAsAvailable(productId) {
+          const csrfToken = '{{ csrf_token }}'; // CSRF token for POST request
+
+          $.ajax({
+              url: `/product/mark_as_available/${productId}/`,
+              type: 'POST',
+              headers: {
+                  'X-CSRFToken': csrfToken,
+              },
+              success: function(response) {
+                  if (response.success) {
+                      alert(response.message);
+                      // Optionally, reload the product list or update the UI as needed
+                      location.reload(); // Reloads the page
+                  } else {
+                      alert(response.message);
+                  }
+              },
+              error: function(xhr) {
+                  alert('An error occurred: ' + xhr.statusText);
+              }
+          });
+      }
+
+  </script>
+
+
+  {% for product in products %}
+
+
+  <div class="modal fade bd-example-modal-lgimg-{{ product.product_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <img src="{% if product.image_url %}
+                                {% static product.image_url %}
+                              {% else %}
+                                {% static 'images/default.png' %}
+                              {% endif %}"
+                             onerror="this.onerror=null; this.src='{% static 'images/default.png' %}';"
+                              class="img-fluid rounded mb-3 image-hover"
+                              style="height: 800px; width: 800px; padding: 20px; object-fit: cover;"
+                              alt="{{ product.title }}"  class="d-block w-400 image-hover" />
+      </div>
+    </div>
+  </div>
+  <hr>
+  
+    <div class="modal fade bd-example-modal-lgads-{{ product.product_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <img src="{% if product.adsurl %}
+                                  {% static product.adsurl %}
+                                {% else %}
+                                  {% static 'images/default.png' %}
+                                {% endif %}"
+                               onerror="this.onerror=null; this.src='{% static 'images/default.png' %}';"
+                                class="img-fluid rounded mb-3 image-hover"
+                                style="height: 800px; width: 800px; padding: 20px; object-fit: cover;"
+                                alt="{{ product.title }}"  class="d-block w-400 image-hover" />
+        </div>
+      </div>
+    </div>
+    
+      {% endfor %}
+
+      <script>
+        $(document).ready(function() {
+          const table = $('#example').DataTable(); // Initialize DataTable
+
+          // Filtering function
+          function filterItems() {
+            const approved = $('#filter-approved').prop('checked');
+            const not_approved = $('#filter-onreview').prop('checked');
+            const restricted = $('#filter-restricted').prop('checked');
+            const sold = $('#filter-sold').prop('checked');
+
+            table.rows().every(function() {
+              const row = this.node(); // Get the row
+              const status = $(row).data('status');
+              const isSold = $(row).data('sold') === 'trued';
+
+              console.log("sold: "+sold);
+              console.log("isSold: "+isSold);
+
+              // Decide whether to show or hide the row based on filters
+              let showRow = true;
+
+              if (approved && status !== 'approved') {
+                showRow = false;
+              }
+
+              if (not_approved && status !== 'on_review') {
+                showRow = false;
+              }
+
+              if (restricted && status !== 'restricted') {
+                showRow = false;
+              }
+
+              if (sold && !isSold) {
+                showRow = false;
+              }
+
+              // Apply the filter: hide or show row
+              if (showRow) {
+                $(row).show();
+              } else {
+                $(row).hide();
+              }
+            });
+
+            // Redraw the table to update pagination and other DataTable functionality
+            table.draw();
+          }
+
+          // Attach filter function to the filter button
+          $('#filter-button').on('click', function() {
+            filterItems();
+          });
+        });
+      </script>
+      
+      
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="{% static 'js/off-canvas.js' %}"></script>
+    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'js/template.js' %}"></script>
+    <!-- endinject -->
+    <!-- End custom js for this page-->
+  </body>
+</html>

@@ -1,0 +1,144 @@
+
+sudo apt-get update
+sudo apt-get install pkg-config
+
+sudo apt-get install libmysqlclient-dev
+sudo apt-get install libmariadb-dev
+
+pip install mysqlclient
+pip install scikit-learn
+
+ ssh -L 5522:193.203.166.209:3306 root@ssh.hostinger.com  
+ sudo certbot --nginx -d jruconnect.com -d www.jruconnect.com
+ sudo nano /etc/nginx/sites-available/jruconnectdisplay
+ sudo nano /etc/nginx/sites-enabled/jruconnectdisplay
+ Jrupassword#123
+ 
+ 
+ sudo certbot --nginx -d seniorcitizencare.site -d www.seniorcitizencare.site
+ gunicorn --workers 3 seniorcare.wsgi:application --bind 185.170.58.95:8000
+ sudo nano /etc/nginx/sites-enabled/seniorcaresystem
+ sudo nginx -t  # Test Nginx configuration for errors 
+ sudo systemctl reload nginx  # Reload Nginx to apply changes
+ 
+ gunicorn --bind 185.170.58.95:8000 seniorcare.wsgi:application
+ gunicorn --bind 62.72.31.122:8000 jruconnect.wsgi:application
+
+
+nohup gunicorn -w 4 -b 185.170.58.95:8000 --timeout 120 seniorcare.wsgi:application > gunicorn.log 2>&1 &
+nohup gunicorn -w 4 -b 62.72.31.122:8000 --timeout 120 jruconnect.wsgi:application > gunicorn.log 2>&1 &
+
+screen -S gunicorn    
+gunicorn -w 4 -b 185.170.58.95:8000 --timeout 120 seniorcare.wsgi:application
+gunicorn -w 4 -b 62.72.31.122:8000 --timeout 120 jruconnect.wsgi:application
+
+then control a and d
+screen -r gunicorn
+
+
+
+ gunicorn --bind 127.0.0.1:8000 jruconnect.wsgi:application
+
+chmod -R 755 /staticfiles/profile_images
+
+
+ssh root@62.72.31.122
+Jrupassword#123
+SeniorCare#123
+rmdir /seniorcare
+mv /seniorcare /seniorcaresystem
+scp -r D:\Download\scare\seniorcare\seniorapp root@185.170.58.95:/var/www/seniorcaresystem/seniorcare/seniorapp/templates/
+scp D:\Download\scare\seniorcare\seniorapp\* root@185.170.58.95:/var/www/seniorcaresystem/seniorcare/seniorapp
+
+
+scp -r root@62.72.31.122:/var/www/jruconnectdisplay/jruapp D:\Download\jruconnectnew
+
+scp -r seniorcaresystem oldsc   are
+
+pip install requests
+
+
+sudo lsof -i :8000
+sudo kill 1234
+
+
+cp -a jruconnectdisplay oldjruconnect
+cp -a newjru/jruconnectdisplay/jruconnect   jruconnectdisplay  
+
+
+server {
+    listen 80;
+    server_name ghgemission.site www.ghgemission.site;
+
+    # Serve ACME challenge files
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+        default_type "text/plain";
+    }
+
+    # Proxy other requests to your application
+    location / {
+        proxy_pass http://88.222.215.67:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
+        alias /var/www/GHG-EMISSION/static/;
+    }
+
+}
+
+sudo nano /etc/nginx/sites-available/GHG-EMISSION 
+sudo nano /etc/nginx/sites-enabled/GHG-EMISSION 
+sudo ln -s /etc/nginx/sites-available/GHG-EMISSION /etc/nginx/sites-enabled/
+sudo certbot --nginx -d ghgemission.site -d www.ghgemission.site
+
+
+
+ssh root@88.222.215.67
+Ghgpassword17_
+cd ../var/www/GHG-EMISSION
+source ../venv/bin/activate
+sudo lsof -i :8000
+sudo kill id-nung-gunicorn 
+screen -X -S 75019.gunicorn quit
+
+
+nohup gunicorn -w 4 -b 88.222.215.67:8000 --timeout 120 app:app > gunicorn.log 2>&1 &
+screen -S gunicorn
+gunicorn -w 10 -b 88.222.215.67:8000 --timeout 120 app:app
+then control a and d
+screen -r gunicorn
+screen -S [session_id] -X quit
+
+
+
+source venv/bin/activate
+source ../venv/bin/activate
+nohup gunicorn -w 10 -b 88.222.215.67:8000 app:app &
+gunicorn -w 4 -b 88.222.215.67:8000 app:app
+
+
+dig +short ghgemission.site
+
+
+
+     HOSTINGER ACC
+
+EMAIL: ghgemission.bsu@gmail.com
+PASSWORD: bsughg2018
+
+
+GIT CLONE:
+
+https://github.com/DianneKristelCastillo/GHG-EMISSION.git
+github.com
+
+
+
+ALTER DATABASE cpa CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+ALTER TABLE cpa CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
