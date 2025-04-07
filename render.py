@@ -9,9 +9,6 @@ def run_command(command):
         print(f"Error occurred while running '{command}': {e}")
 
 if __name__ == "__main__":
-    # Install requirements
-    run_command("pip install -r requirements.txt")
-
     # Collect static files
     run_command("python manage.py collectstatic --noinput")
 
