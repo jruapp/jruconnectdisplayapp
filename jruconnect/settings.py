@@ -31,11 +31,11 @@ STATIC_URL = '/static/'
 SECRET_KEY = 'django-insecure-3urs3vn5)md7+5p@s+1+nj2-qsj_si4z^w@fmr2jrp^&*j3s(b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['jruconnect.com', 'www.jruconnect.com', '127.0.0.1', 'jruconnectdisplayapp.onrender.com', 'www.jruconnect.info', 'jruconnect.info']
 
-USE_X_FORWARDED_HOST = False
+USE_X_FORWARDED_HOST = True
 
 CSRF_TRUSTED_ORIGINS = [
     'https://jruconnect.com',
