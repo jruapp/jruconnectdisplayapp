@@ -286,19 +286,7 @@ def view(request):
 
 
 def login(request):
-    if request.user.is_authenticated and request.user.email:
-        
-        # Query the user by username
-        try:
-            user = User.objects.get(email=request.user.email, verified=1)
-        except User.DoesNotExist:
-            return render(request, 'views/login.html')
-        # Ideally, use a password hashing library
-        if user:
-            request.session['admin_id'] = user.user_id  # Set session variable
-            request.session['full_name'] = f"{user.first_name} {user.middle_name} {user.last_name}"  # Set session variable
-            request.session['role'] = user.role 
-            return redirect('home')
+    
 
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -318,7 +306,20 @@ def login(request):
             return redirect('home')
         else:
             return render(request, 'views/login.html', {'error': 'Invalid credentials'})
-    return render(request, 'views/login.html')
+    elif request.user.is_authenticated and request.user.email:
+        
+        # Query the user by username
+        try:
+            user = User.objects.get(email=request.user.email, verified=1)
+        except User.DoesNotExist:
+            return render(request, 'views/login.html')
+        # Ideally, use a password hashing library
+        if user:
+            request.session['admin_id'] = user.user_id  # Set session variable
+            request.session['full_name'] = f"{user.first_name} {user.middle_name} {user.last_name}"  # Set session variable
+            request.session['role'] = user.role 
+            return redirect('home')
+    return render(request, 'views/login.html', {'email' :request.user.email})
 
 
 

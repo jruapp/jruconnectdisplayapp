@@ -32,7 +32,7 @@
               <form class="pt-3" method="post">
                 {% csrf_token %}
                 <div class="form-group">
-                  <label for="username">JRU Email</label>
+                  <label for="username">JRU Email {{email}}</label>
                   <input type="text" class="form-control form-control-lg" name="username" placeholder="Email"  pattern=".+@my\.jru\.edu$">
                 </div>
                 <div class="form-group position-relative">
