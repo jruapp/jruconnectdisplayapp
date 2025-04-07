@@ -3,3 +3,5 @@ scikit-learn
 pandas
 mysqlclient
 gunicorn
+django-cors-headers
+social-auth-app-django
