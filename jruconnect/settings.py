@@ -33,7 +33,7 @@ SECRET_KEY = 'django-insecure-3urs3vn5)md7+5p@s+1+nj2-qsj_si4z^w@fmr2jrp^&*j3s(b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['jruconnect.com', 'www.jruconnect.com', '127.0.0.1']
+ALLOWED_HOSTS = ['jruconnect.com', 'www.jruconnect.com', '127.0.0.1', 'jruconnectdisplayapp.onrender.com']
 
 USE_X_FORWARDED_HOST = True
 
