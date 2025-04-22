@@ -1,0 +1,657 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>JRU-Connect - Dashboard</title>
+  <!-- base:css -->
+  <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css'%}" />
+  <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css'%}" />
+    
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{% static 'css/style.css'%}">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="{% static 'images/favicon.png'%}" />
+</head>
+<body>
+  <div class="container-scroller d-flex">
+    <!-- partial:./partials/_sidebar.html -->
+    
+    {% include 'views/nav.html' %}
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:./partials/_navbar.html -->
+      <nav class="navbar col-lg-12 col-12 px-0 py-0 py-lg-4 d-flex flex-row" style="height: 120px">
+        <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="mdi mdi-menu"></span>
+          </button>
+          <div class="navbar-brand-wrapper mr-5">
+            
+          </div>
+          <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1">Welcome back, {{ admin_user.first_name }}</h4>
+          <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item">
+                <h4
+                  id="date-time"
+                  class="mb-0 font-weight-bold d-none d-xl-block"
+                >
+                  Loading...
+                </h4>
+
+                <script>
+                  function updateDateTime() {
+                    const now = new Date();
+                    const options = {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: false,
+                    };
+                    const dateTimeString = now.toLocaleDateString(
+                      "en-US",
+                      options
+                    );
+                    document.getElementById("date-time").textContent =
+                      dateTimeString;
+                  }
+
+                  // Update the date and time every second
+                  setInterval(updateDateTime, 1000);
+
+                  // Initialize date and time
+                  updateDateTime();
+                </script>
+              </li>
+             <li class="nav-item dropdown mr-1">
+    <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+        <h4 class="font-weight-bold mb-0 d-none d-md-block mt-1 mr-2">{{ admin_user.first_name }}</h4>
+
+      <img src="{% if admin_user.profile_url %}{% static admin_user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" style="width: 40px; height: 40px; border-radius: 50px;" alt="image" class="profile-pic">
+
+    </a>
+    <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+      <p class="mb-0 font-weight-normal float-left dropdown-header">Account Management</p>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-account-cog-outline text-success"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+          <button class="btn btn-success m-1 edit-btn" data-id="{{ admin_user.user_id }}" data-username="{{ admin_user.username }}" data-password="{{ admin_user.password_hash }}"  data-firstname="{{ admin_user.first_name }}" data-middlename="{{ admin_user.middle_name }}" data-lastname="{{ admin_user.last_name }}" data-email="{{ admin_user.email }}" data-role="{{ admin_user.role }}" data-verified="{{ admin_user.verified }}" data-toggle="modal" data-target="#editUserModalnav">Edit Account</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-image-edit menu-icon text-primary"  style="font-size: 30px;"></i>
+        </div>
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-primary m-1 edit-btn"  data-toggle="modal" data-target="#editUserIconnav">Change Profile Picture</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="" data-toggle="modal" data-target="#changePasswordModal" data-user-id="{{ admin_id }}">
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-lock-reset text-danger"  style="font-size: 30px;"></i>
+        </div>
+        
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Change Password</button>
+
+        </div>
+      </a>
+      <a class="dropdown-item preview-item" href="{% url 'logout' %}" >
+        <div class="preview-thumbnail"> 
+          <i class="mdi mdi-logout-variant menu-icon text-danger"  style="font-size: 30px;"></i>
+        </div>
+
+        <div class="preview-item-content flex-grow">
+                <button class="btn btn-danger m-1 edit-btn" >Logout</button>
+
+        </div>
+      </a>
+    </div>
+  </li>
+          </ul>
+          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+          </button>
+        </div>
+       
+      </nav>
+    <!-- partial -->
+<div class="main-panel">
+  <div class="content-wrapper">
+
+    <div class="row">
+    
+
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+      <div class="card-body">
+        <p class="card-title">Top 5 Products (Combined)</p>
+        <canvas id="combinedChart"></canvas>
+      </div>
+      </div>
+      </div>
+      
+      
+      <div class="col-md-4 grid-margin stretch-card">
+        <div class="card">
+      <div class="card-body">
+      <p class="card-title">Top 5 Products by Likes</p>
+      <canvas id="likesChart"></canvas>
+      </div>
+      </div>
+      </div>
+      
+      <div class="col-md-4 grid-margin stretch-card">
+      <div class="card">
+      <div class="card-body">
+      <p class="card-title">Top 5 Products by Views</p>
+      <canvas id="viewsChart"></canvas>
+      </div>
+      </div>
+      </div>
+      
+      <div class="col-md-4 grid-margin stretch-card">
+      <div class="card">
+      <div class="card-body">
+      <p class="card-title">Top 5 Products by Ratings</p>
+      <canvas id="ratingsChart"></canvas>
+      </div>
+      </div>
+      </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-xl-12 grid-margin stretch-card">
+          <div class="row w-100 flex-grow">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h3> Top 10 Products and Their View, Likes and Ratings
+                  </h3>
+      <table class="table table-bordered" id="example">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Product Name</th>
+                <th>Views</th>
+                <th>Likes</th>
+                <th>Average Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in top_products %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ product.title }}</td>
+                <td>{{ product.views }}</td>
+                <td>{{ product.likes }}</td>
+                <td>{{ product.ratings|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  </div>
+  </div>
+</div>
+</div>
+</div>
+    <div class="row">
+      <div class="col-12 col-xl-12 grid-margin stretch-card">
+        <div class="row w-100 flex-grow">
+          <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body">
+                <p class="card-title">Advertisement Report</p>
+                <div class="regional-chart-legend d-flex align-items-center flex-wrap mb-1" id="regional-chart-legend"></div>
+                <canvas height="200" id="regional-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body pb-0">
+                <div class="d-flex align-items-center mb-4">
+                  <p class="card-title mb-0 mr-1">Inquiries Report</p>
+                </div>
+                <div class="d-flex flex-wrap pt-2">
+                  <canvas height="200" id="activity-chart" class="p-2"></canvas>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="card-title">Product Engagement Summary</p>
+            <div class="product-engagement-chart-legend d-flex align-items-center flex-wrap mb-1" id="product-engagement-chart-legend"></div>
+            <canvas height="300" id="product-engagement-chart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="card-title">Feedback Ratings Overview</p>
+            <div class="feedback-ratings-chart-legend d-flex align-items-center flex-wrap mb-1" id="feedback-ratings-chart-legend"></div>
+            <canvas height="300" id="feedback-ratings-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+<!-- Bootstrap Modals for each chart -->
+<!-- Likes Modal -->
+<div class="modal fade" id="likesModal" tabindex="-1" aria-labelledby="likesModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="likesModalLabel">Likes Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p id="likesModalContent"></p>
+              <img id="likesModalImage" src="" alt="Product Image" class="img-fluid rounded mb-3" style="height: 200px; object-fit: cover;">
+              <a id="likesVisitButton" class="btn btn-primary" href="" target="_blank">Visit</a>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Views Modal -->
+<div class="modal fade" id="viewsModal" tabindex="-1" aria-labelledby="viewsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="viewsModalLabel">Views Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p id="viewsModalContent"></p>
+              <img id="viewsModalImage" src="" alt="Product Image" class="img-fluid rounded mb-3" style="height: 200px; object-fit: cover;">
+              <a id="viewsVisitButton" class="btn btn-primary" href="" target="_blank">Visit</a>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Ratings Modal -->
+<div class="modal fade" id="ratingsModal" tabindex="-1" aria-labelledby="ratingsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="ratingsModalLabel">Ratings Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p id="ratingsModalContent"></p>
+              <img id="ratingsModalImage" src="" alt="Product Image" class="img-fluid rounded mb-3" style="height: 200px; object-fit: cover;">
+              <a id="ratingsVisitButton" class="btn btn-primary" href="" target="_blank">Visit</a>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Combined Modal -->
+<div class="modal fade" id="combinedModal" tabindex="-1" aria-labelledby="combinedModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="combinedModalLabel">Combined Score Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p id="combinedModalContent"></p>
+              <img id="combinedModalImage" src="" alt="Product Image" class="img-fluid rounded mb-3" style="height: 200px; object-fit: cover;">
+              <a id="combinedVisitButton" class="btn btn-primary" href="" target="_blank">Visit</a>
+          </div>
+      </div>
+  </div>
+</div>
+<script>
+  const likesData = JSON.parse('{{ likes|safe }}');
+  const viewsData = JSON.parse('{{ views|safe }}');
+  const ratingsData = JSON.parse('{{ ratings|safe }}');
+  const combinedData = JSON.parse('{{ combined|safe }}');
+
+  function getRandomPastelColor() {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 70%, 80%)`;
+  }
+
+  // Helper function to create a chart
+  const createChart = (ctx, labels, ids, image_urls, data, title, chartType, modalId, contentId, imageId, buttonId) => {
+    const backgroundColors = labels.map(() => getRandomPastelColor());
+    const borderColors = labels.map(() => getRandomPastelColor());
+
+    const chart = new Chart(ctx, {
+      type: chartType,
+      data: {
+        labels: labels,
+        datasets: [{
+          label: title,
+          data: data,
+          backgroundColor: backgroundColors,
+          borderColor: borderColors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        onClick: (event, elements) => {
+          if (elements.length > 0) {
+            const index = elements[0].index;
+            const selectedData = chart.data.labels[index];
+            const selectedValue = chart.data.datasets[0].data[index];
+            const selectedId = ids[index];
+            let selectedImageUrl = "static/" +  image_urls[index];
+
+            // Populate modal with data
+            const modal = new bootstrap.Modal(document.getElementById(modalId));
+            const content = document.getElementById(contentId);
+            const image = document.getElementById(imageId);
+            const visitButton = document.getElementById(buttonId);
+
+            content.textContent = `Product: ${selectedData}, Value: ${selectedValue}`;
+            visitButton.href = `/view_product/${selectedId}/`; // Construct the URL dynamically
+            
+
+            image.src = selectedImageUrl; // Set image source
+
+            // Show the modal
+            modal.show();
+          }
+        }
+      }
+    });
+  }
+
+  // Create charts for each dataset
+  createChart(
+    document.getElementById('likesChart'),
+    likesData.map(p => p.title),
+    likesData.map(p => p.product_id),
+    likesData.map(p => p.image_url),
+    likesData.map(p => p.likes_count),
+    'Likes Count',
+    'bar',
+    'likesModal',
+    'likesModalContent',
+    'likesModalImage',
+    'likesVisitButton'
+  );
+
+  createChart(
+    document.getElementById('viewsChart'),
+    viewsData.map(p => p.title),
+    viewsData.map(p => p.product_id),
+    viewsData.map(p => p.image_url),
+    viewsData.map(p => p.views_count),
+    'Views Count',
+    'bar',
+    'viewsModal',
+    'viewsModalContent',
+    'viewsModalImage',
+    'viewsVisitButton'
+  );
+
+  createChart(
+    document.getElementById('ratingsChart'),
+    ratingsData.map(p => p.title),
+    ratingsData.map(p => p.product_id),
+    ratingsData.map(p => "{% static '" + p.image_url + "' %}"),
+    ratingsData.map(p => p.avg_rating),
+    'Average Ratings',
+    'bar',
+    'ratingsModal',
+    'ratingsModalContent',
+    'ratingsModalImage',
+    'ratingsVisitButton'
+  );
+
+  createChart(
+    document.getElementById('combinedChart'),
+    combinedData.map(p => p.title),
+    combinedData.map(p => p.product_id),
+    combinedData.map(p => p.image_url),
+    combinedData.map(p => p.combined_score),
+    'Combined Score',
+    'bar',
+    'combinedModal',
+    'combinedModalContent',
+    'combinedModalImage',
+    'combinedVisitButton'
+  );
+</script>
+
+  <!-- container-scroller -->
+
+  <!-- base:js -->
+  <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page-->
+  <script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
+  <!-- End plugin js for this page-->
+  <!-- inject:js -->
+  <script src="{% static 'js/off-canvas.js' %}"></script>
+  <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'js/template.js' %}"></script>
+  <script src="{% static 'js/misc.js' %}"></script>
+  <!-- endinject -->
+  <!-- plugin js for this page -->
+  <!-- End plugin js for this page -->
+  <!-- Custom js for this page-->
+  <script >
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // Function to fetch data and initialize chart
+      function fetchDataAndInitializeChart(url, chartConfig) {
+          fetch(url)
+              .then(response => response.json())
+              .then(data => {
+                  const labels = [];
+                  const datasetData = [];
+                  
+                  data.forEach(item => {
+                      labels.push(`${item.year}-${item.month}`); // Customize the label format as needed
+                      datasetData.push(item.engagement_count || item.rating_count || item.status_count); // Adjust based on the data
+                  });
+  
+                  new Chart(chartConfig.element, {
+                      type: chartConfig.type,
+                      data: {
+                          labels: labels,
+                          datasets: [{
+                              label: chartConfig.label,
+                              data: datasetData,
+                              backgroundColor: chartConfig.backgroundColor,
+                              borderColor: chartConfig.borderColor,
+                              borderWidth: 1
+                          }]
+                      },
+                      options: chartConfig.options
+                  });
+              })
+              .catch(error => console.error('Error fetching data:', error));
+      }
+  
+      // Advertisement Report Chart
+      fetchDataAndInitializeChart('/get_engagements_by_type/', {
+          element: document.getElementById('regional-chart').getContext('2d'),
+          type: 'bar',
+          label: 'Engagement Count by Type',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+  
+      // Inquiries Report Chart
+      fetchDataAndInitializeChart('/get_support_inquiries_by_status/', {
+          element: document.getElementById('activity-chart').getContext('2d'),
+          type: 'pie',
+          label: 'Support Inquiries Status',
+          backgroundColor: [
+    'rgba(255, 206, 86, 0.2)',
+    'rgba(75, 192, 192, 0.2)',
+    'rgba(255, 159, 64, 0.2)',
+    'rgba(153, 102, 255, 0.2)',
+    'rgba(54, 162, 235, 0.2)',
+    'rgba(255, 99, 132, 0.2)',
+    'rgba(255, 159, 64, 0.2)',
+    'rgba(144, 238, 144, 0.2)',
+    'rgba(255, 182, 193, 0.2)',
+    'rgba(255, 255, 102, 0.2)',
+    'rgba(0, 128, 128, 0.2)',
+    'rgba(128, 0, 128, 0.2)'
+],
+borderColor: [
+    'rgba(255, 206, 86, 1)',
+    'rgba(75, 192, 192, 1)',
+    'rgba(255, 159, 64, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(54, 162, 235, 1)',
+    'rgba(201, 203, 207, 1)',
+    'rgba(255, 99, 132, 1)',
+    'rgba(144, 238, 144, 1)',
+    'rgba(255, 182, 193, 1)',
+    'rgba(255, 255, 102, 1)',
+    'rgba(0, 128, 128, 1)',
+    'rgba(128, 0, 128, 1)'
+],
+
+          options: {
+              responsive: true
+          }
+      });
+  
+      // Product Engagement Summary Chart
+      fetchDataAndInitializeChart('/get_product_engagement_over_time/', {
+          element: document.getElementById('product-engagement-chart').getContext('2d'),
+          type: 'line',
+          label: 'Product Engagement Over Time',
+          backgroundColor: 'rgba(153, 102, 255, 0.2)',
+          borderColor: 'rgba(153, 102, 255, 1)',
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+  
+      // Feedback Ratings Overview Chart
+      fetchDataAndInitializeChart('/get_feedback_by_rating/', {
+          element: document.getElementById('feedback-ratings-chart').getContext('2d'),
+          type: 'doughnut',
+          label: 'Feedback Ratings',
+          backgroundColor: [
+    'rgba(255, 206, 86, 0.2)',
+    'rgba(75, 192, 192, 0.2)',
+    'rgba(255, 159, 64, 0.2)',
+    'rgba(153, 102, 255, 0.2)',
+    'rgba(54, 162, 235, 0.2)',
+    'rgba(201, 203, 207, 0.2)',
+    'rgba(255, 99, 132, 0.2)',
+    'rgba(255, 99, 132, 0.2)',
+    'rgba(255, 99, 132, 0.2)',
+    'rgba(255, 99, 132, 0.2)',
+    'rgba(144, 238, 144, 0.2)',
+    'rgba(255, 182, 193, 0.2)',
+    'rgba(255, 255, 102, 0.2)',
+    'rgba(0, 128, 128, 0.2)',
+    'rgba(128, 0, 128, 0.2)'
+],
+borderColor: [
+    'rgba(255, 206, 86, 1)',
+    'rgba(75, 192, 192, 1)',
+    'rgba(144, 238, 144, 1)',
+    'rgba(255, 159, 64, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(255, 206, 86, 1)',
+    'rgba(0, 128, 128, 1)',
+    'rgba(54, 162, 235, 1)',
+    'rgba(201, 203, 207, 1)',
+    'rgba(255, 99, 132, 1)',
+    'rgba(144, 238, 144, 1)',
+    'rgba(255, 182, 193, 1)',
+    'rgba(255, 255, 102, 1)',
+    'rgba(144, 238, 144, 1)',
+    'rgba(255, 255, 102, 1)',
+    'rgba(0, 128, 128, 1)',
+    'rgba(128, 0, 128, 1)'
+],
+
+          options: {
+              responsive: true
+          }
+      });
+
+    // Function to initialize a chart
+    function initializeChart(ctx, labels, data, title) {
+        new Chart(ctx, {
+            type: 'bar', // or 'pie', 'line', etc.
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: title,
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    
+});
+
+  
+  </script>
+  
+  <!-- End custom js for this page-->
+</body>
+
+</html>

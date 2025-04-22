@@ -71,7 +71,7 @@ urlpatterns = [
     path('auth/', include('social_django.urls', namespace='social')),  # This includes the social auth URLs
     
        # Data fetching URLs
-    path('google-login/', views.google_login, name='google_login'),
+    path('google-login/<str:process>', views.google_login, name='google_login'),
     path('google-login-handler/', views.google_login_handler, name='google_login_handler'),
     path('preferences/', views.preferences, name='preferences'),
     path('get_engagements_by_type/', views.get_engagements_by_type, name='get_engagements_by_type'),

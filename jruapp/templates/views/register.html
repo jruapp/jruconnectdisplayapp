@@ -139,14 +139,30 @@
 <body>
   <div class="container-scroller d-flex">
     <div class="container-fluid page-body-wrapper full-page-wrapper d-flex">
-      <div class="content-wrapper d-flex align-items-center auth px-0">
+      <div class="content-wrapper align-items-center auth px-0">
+        {% if email_user == 'na' %}
         <div class="row w-100 mx-0">
-          <div class="col-lg-4 mx-auto">
+          <div class="col-lg-6 col-md-6 mx-auto">
             <div class="auth-form-light text-left py-5 px-4 px-sm-5">
               <div class="brand-logo d-flex justify-content-center">
                 <img src="{% static 'images/favicon.png' %}" alt="logo">
               </div>
-              <h4 class="text-center">REGISTER AS STUDENT</h4>
+              <h4 class="text-center">REGISTER USING GOOGLE LOGIN</h4>
+              <hr>
+<a href="{% url 'social:begin' 'google-oauth2' %}?next={{ request.path }}" class="btn btn-primary btn-block">Register with Google</a>
+             
+            </div>
+          </div>
+        </div>
+<hr>
+{% endif %}
+        <div class="row w-100 mx-0">
+          <div class="col-lg-6 col-md-6 mx-auto">
+            <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+              {% if email_user != 'na'  %}
+              <p class="alert-success text-center p-2 mb-3"  style="font-weight: bold;">Google Login Success! Your data pre-inserted below!</p>
+            {% endif %}
+              <h4 class="text-center">REGISTER {% if email_user == 'na' %} USING NORMAL OUTPUTS {% endif %} {% if email_user != 'na' %} USING GOOGLE LOGIN {% endif %}  </h4>
               <hr>
               <form class="pt-3" id="registrationForm" method="post" enctype="multipart/form-data" onsubmit="validateInput(event)">
                 {% csrf_token %}
@@ -156,11 +172,11 @@
                 </div>
                 <div class="form-group">
                   <label for="username">Username</label>
-                  <input type="text" class="form-control form-control-lg" name="username" placeholder="Username" required>
+                  <input type="text" class="form-control form-control-lg" value="{% if email_user != 'na' %}{{ username }}{% endif %}"  name="username" placeholder="Username" required>
                 </div>
                 <div class="form-group">
                   <label for="first_name">First Name</label>
-                  <input type="text" class="form-control form-control-lg" name="first_name" placeholder="First Name" required>
+                  <input type="text" class="form-control form-control-lg" value="{% if email_user != 'na' %}{{ first_name }}{% endif %}"  name="first_name" placeholder="First Name" required>
                 </div>
                 <div class="form-group">
                   <label for="middle_name">Middle Name</label>
@@ -168,14 +184,14 @@
                 </div>
                 <div class="form-group">
                   <label for="last_name">Last Name</label>
-                  <input type="text" class="form-control form-control-lg" name="last_name" placeholder="Last Name" required>
+                  <input type="text" class="form-control form-control-lg" value="{% if email_user != 'na' %}{{ last_name }}{% endif %}"  name="last_name" placeholder="Last Name" required>
                 </div>
                 <div class="form-group">
                   <label for="email">Email (Email must end with @my.jru.edu)</label>
-                  <input type="text" id="email" name="email" class="form-control form-control-lg"  placeholder="Enter your email" 
+                  <input type="text" id="email" {% if email_user != 'na' %} readonly {% endif %} value="{% if email_user != 'na' %}{{ email_user }}{% endif %}" name="email" class="form-control form-control-lg"  placeholder="Enter your email" 
                   pattern=".+@my\.jru\.edu$"
  
-         title="Email must end with @my.jru.edu" required>
+                  title="Email must end with @my.jru.edu" required>
                 </div>
                 <div class="form-group">
                   <label for="password">Password (Must have one capital letter, one number and one special character</label>
@@ -225,11 +241,11 @@
                   <input type="file" class="form-control" name="profile_image" accept="image/*">
                 </div>
 
-      <!-- Enrollment form PDF upload -->
-      <div class="form-group">
-        <label for="enrollment_form">Upload Enrollment Form (PDF)</label>
-        <input type="file" name="enrollment_form" id="enrollment_form" accept=".pdf" class="form-control">
-      </div>
+                <!-- Enrollment form PDF upload -->
+                <div class="form-group">
+                  <label for="enrollment_form">Upload Enrollment Form (PDF)</label>
+                  <input type="file" name="enrollment_form" id="enrollment_form" accept=".pdf" class="form-control">
+                </div>
 
                 <div class="form-group">
                   <label for="role">Course</label>
@@ -259,6 +275,7 @@
             </div>
           </div>
         </div>
+
       </div>
       <!-- content-wrapper ends -->
     </div>

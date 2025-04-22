@@ -42,7 +42,18 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+    <style>
+      .carousel-control-next-icon{
+        background-color: #072e75;
+        border-radius: 150px;
+        padding: 10px;
+      }
+      .carousel-control-prev-icon{
+        background-color: #072e75;
+        border-radius: 150px;
+        margin: 10px;
+      }
+    </style>
 
   </head>
 
@@ -53,6 +64,7 @@
 
     <div class="container-scroller d-flex">
       <!-- partial:{% static 'partials/_sidebar.html -->
+      {% include 'views/nav.html' %}
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:./partials/_navbar.html -->
@@ -171,79 +183,83 @@
           </div>
         </nav>
         <!-- partial -->
+        <form method="post">
+          {% csrf_token %}
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="row">
               <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel"  style="background-color: black;">
+                      <h4 class="text-uppercase text-center">Welcome to JRU CONNECT New User! Select Categories with sample products</h4>
+                      <h5 class=" text-center">Tell us your preferences now!</h5>
+                      <hr>
+
+                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="background-color: #072e75; border-radius: 30px; padding: 20px">
                       <ol class="carousel-indicators">
-                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                        {% for group in chunked_preferences %}
+                          <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+                        {% endfor %}
                       </ol>
+                    
                       <div class="carousel-inner">
-                        <div class="carousel-item active">
-                          <div class="card m-2 mb-5" style="width: 18rem;">
-                            <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
-                            <div class="card-body">
-                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                      
+
+                        {% for group in chunked_preferences %}
+                          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <div class="row">
+                              {% for product in group %}
+                                <div class="col-md-4">
+                                  <div class="card m-2 mb-5" style="width: 90%;">
+                                   
+                                    <div class="card-body">
+                                      <h4 class=" mb-3"><u>{{ product.category_name }}</u></h4>
+                                      <h5 class="card-title">Category Purpose: </h5>
+                                      <p class="card-text">{{ product.category_purpose }}</p>
+                                      <h5 class="card-title">Category Description: </h5>
+                                      <p class="card-text">{{ product.category_description }}</p>
+                                      <hr> <img class="card-img-top" src="{% if product.image_url %}
+                                      {% static product.image_url %}
+                                    {% else %}
+                                      {% static 'images/default.png' %}
+                                    {% endif %}" alt="{{ product.title }}" style=" padding: 20px; border-radius: 5px;">
+                                      <h5 class="card-title">Example Product: {{ product.title }}</h5>
+                                      <p class="card-text">{{ product.product_description|truncatechars:100 }}</p>
+                                      <p class="card-text"><strong>₱{{ product.price }}</strong></p>
+                                      <p class="card-text"><small class="text-muted">{{ product.category }}</small></p>
+                                      <hr>
+                                      <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="{{ product.product_id }}" role="switch" id="flexSwitchCheckChecked{{ product.product_id }}" >
+                                        <label class="form-check-label" for="flexSwitchCheckChecked"{{ product.product_id }}>I want this product</label>
+                                      </div>
+                                    </div>
+                                    
+                                  </div>
+                                </div>
+                              {% endfor %}
                             </div>
+                          
                           </div>
-                        </div>
-                        <div class="carousel-item">
-                          <div class="card m-2 mb-5" style="width: 18rem;">
-                            <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
-                            <div class="card-body">
-                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="carousel-item">
-                          <div class="row">
-                          <div class="col-md-4">
-                          <div class="card m-2 mb-5" style="width: 90%;">
-                            <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
-                            <div class="card-body">
-                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            </div>
-                          </div>
-                        </div>
-                          <div class="col-md-4">
-                          <div class="card m-2" style="width: 90%;">
-                            <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
-                            <div class="card-body">
-                              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            </div>
-                          </div>
-                        </div>
-                          <div class="col-md-4">
-                            <div class="card m-2" style="width: 90%;">
-                              <img class="card-img-top" src="{% static 'images/favicon.png'%}" alt="Card image cap">
-                              <div class="card-body">
-                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                              </div>
-                          </div>
-                          </div>
-                        </div>
-                        </div>
-                        </div>
+                        {% endfor %}
                       </div>
-                      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    
+                      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev" style="margin-left: -90px;">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="sr-only">Previous</span>
                       </a>
-                      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next" style="margin-right: -90px;">
+                        <span class="carousel-control-next-icon" aria-hidden="true" ></span>
                         <span class="sr-only">Next</span>
                       </a>
                     </div>
+                    
+          <button type="submit" class="btn btn-success m-2">Submit my preferred products</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+                              </form>
           <!-- content-wrapper ends -->
           {% include 'views/footer.html' %}
           <!-- partial -->

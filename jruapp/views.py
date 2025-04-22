@@ -1,12 +1,12 @@
 from datetime import timezone
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import HttpResponse,JsonResponse, HttpResponseForbidden
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import logout
 from jruconnect import settings
-from .models import TopRatedProduct, AvailedProductDetailsView, AvailedProduct, UserMessagesView, AllProductsRatings, Product, User, Engagement, Feedback, Message, Profile, SupportInquiry, ProductEngagementSummary, ViewEngagementsByType, ViewProductEngagementOverTime, ViewFeedbackByRating, ViewSupportInquiriesByStatus, UserLikes, UserProductFeedbackView, Top5ProductLikes, Top5ProductViews, Top5ProductRatings, Top5CombinedProducts, TopProductsAll
+from .models import RandomProductPerCategory, TopRatedProduct, AvailedProductDetailsView, AvailedProduct, UserMessagesView, AllProductsRatings, Product, User, Engagement, Feedback, Message, Profile, SupportInquiry, ProductEngagementSummary, ViewEngagementsByType, ViewProductEngagementOverTime, ViewFeedbackByRating, ViewSupportInquiriesByStatus, UserLikes, UserProductFeedbackView, Top5ProductLikes, Top5ProductViews, Top5ProductRatings, Top5CombinedProducts, TopProductsAll
 import json
 import os
 from django.db.models import Q
@@ -20,6 +20,7 @@ from django.utils.timezone import now
 from django.core.mail import send_mail
 from django.http import HttpRequest
 import pandas as pd 
+
 
 
 def generate_otp():
@@ -176,6 +177,9 @@ def home(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
 
@@ -229,6 +233,7 @@ def get_support_inquiries_by_status(request):
     return JsonResponse(data, safe=False)
 @csrf_exempt
 def register(request):
+    
     if request.method == 'POST':
         try:
             # Handle profile image upload
@@ -277,8 +282,20 @@ def register(request):
             return redirect('student')  # Redirect after successful registration
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
+    email_user = "na"
+    first_name = "na"
+    last_name = "na"
+    username = "na"
+    if request.user.is_authenticated:
+        # Only try to access the email if the user is authenticated
+        if hasattr(request.user, 'email'):
+            email_user = request.user.email
+            first_name = request.user.first_name
+            last_name = request.user.last_name
+            username = request.user.username
+           
     
-    return render(request, 'views/register.html')
+    return render(request, 'views/register.html', {'email_user' :email_user, 'first_name' :first_name, 'last_name' : last_name, 'username': username})
 
 def view(request):
     return render(request, 'views/view.html')
@@ -382,6 +399,9 @@ def products(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
    
@@ -401,6 +421,9 @@ def products_student(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
    
@@ -424,6 +447,9 @@ def user_profile(request, user_profile_id):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
 
@@ -473,6 +499,9 @@ def view_product(request, product_id):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
 
@@ -585,6 +614,9 @@ def ecom(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
 
@@ -650,6 +682,9 @@ def ecom_top(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
 
@@ -817,6 +852,9 @@ def product_avails(request, product_id):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  
 
@@ -857,6 +895,10 @@ def users(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
+                
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
     all_users = User.objects.all()
@@ -872,6 +914,9 @@ def engagements(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
     all_engagements = Engagement.objects.all()
@@ -896,6 +941,9 @@ def feedbacks(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
     all_feedbacks = Feedback.objects.all()
@@ -916,6 +964,9 @@ def messages(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
     all_messages = Message.objects.all()
@@ -934,6 +985,9 @@ def profiles(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
     all_profiles = Profile.objects.all()
@@ -951,6 +1005,9 @@ def support_inquiries(request):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
     all_inquiries = SupportInquiry.objects.all()
@@ -992,8 +1049,48 @@ def google_logout(request):
     return redirect('/')  # or your custom URL
 
 def preferences(request):
-    return render(request, "views/preferences.html")
+    full_name = request.session.get('full_name', 'Guest')
+    admin_id = request.session.get('admin_id', '0')
+    role = request.session.get('role', '')
+    preferences_data = list(RandomProductPerCategory.objects.all())
+        # Fetch the admin user based on admin_id
+    admin_user = None
+    if admin_id:
+        try:
+            admin_user = User.objects.get(user_id=admin_id)
 
+        except User.DoesNotExist:
+            admin_user = None  # Handle case where no admin user is found
+    if request.method == 'POST':
+        user =  admin_user  # or fetch user another way, like request.POST.get('user_id')
+
+        for key in request.POST:
+            # Skip CSRF token and non-product keys
+            if key.isdigit():
+                product_id = int(key)
+                try:
+                    product = Product.objects.get(pk=product_id)
+                    Engagement.objects.create(
+                        product=product,
+                        user=user,
+                        type='like'  # or 'click' depending on your context
+                    )
+                except Product.DoesNotExist:
+                    continue
+        user.is_new_user = 'no'
+        user.save()
+        return redirect('advertisements')  # Redirect after successful form submit
+    
+    # Split into chunks of 3 for carousel slides
+    chunked_preferences = [preferences_data[i:i+3] for i in range(0, len(preferences_data), 3)]
+
+    return render(request, "views/preferences.html", {
+        'chunked_preferences': chunked_preferences,
+        'full_name': full_name,
+        'role': role,
+        'admin_id': admin_id,
+        'admin_user': admin_user
+    })
 
 
 def chat_message(request, user_id):
@@ -1008,6 +1105,10 @@ def chat_message(request, user_id):
     if admin_id:
         try:
             admin_user = User.objects.get(user_id=admin_id)
+            if User.objects.filter(user_id=admin_id, is_new_user='yes').exists():
+                return redirect('preferences')
+
+            
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
 

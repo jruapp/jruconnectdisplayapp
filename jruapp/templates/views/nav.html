@@ -50,12 +50,14 @@
                 </ul>
             </div>
         </li>
+        {% if role == "admin" %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'products' %}">
                 <i class="mdi mdi-box menu-icon"></i>
                 <span class="menu-title">Products</span>
             </a>
         </li>
+        {% endif %}
 
         {% if role == "student" %}
 

@@ -20,6 +20,36 @@ class ProductEngagementSummary(models.Model):
         
         
 
+class RandomProductPerCategory(models.Model):
+    product_id = models.IntegerField()
+    user_id = models.IntegerField(null=True, blank=True)
+    title = models.CharField(max_length=455)
+    product_description = models.TextField()
+    category = models.CharField(max_length=100, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    stock = models.IntegerField(null=True, blank=True)
+    location = models.CharField(max_length=255, null=True, blank=True)
+    product_image_url = models.CharField(max_length=255, null=True, blank=True)
+    ads_url = models.CharField(max_length=455)
+    is_sold = models.BooleanField(default=False)
+    date_posted = models.DateTimeField()
+    ads_status = models.CharField(max_length=20, choices=[
+        ('on_review', 'On Review'),
+        ('restricted', 'Restricted'),
+        ('deleted', 'Deleted'),
+        ('approved', 'Approved')
+    ], default='on_review')
+    restriction_reason = models.CharField(max_length=455, null=True, blank=True)
+
+    category_id = models.IntegerField(null=True, blank=True)
+    category_name = models.CharField(max_length=255, null=True, blank=True)
+    category_description = models.TextField(null=True, blank=True)
+    category_purpose = models.TextField(null=True, blank=True)
+    category_image_url = models.CharField(max_length=500, null=True, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'random_product_per_category_view'
 
 class ViewEngagementsByType(models.Model):
     year = models.IntegerField()
@@ -81,6 +111,10 @@ class User(models.Model):
         ('student', 'Student'),
         ('admin', 'Admin'),
     ]
+    USER_IS_NEW = [
+        ('yes', 'Yes'),
+        ('no', 'No'),
+    ]
     user_id = models.AutoField(primary_key=True)
     stud_id = models.CharField(max_length=255, null=True, blank=True)
     username = models.CharField(max_length=50, unique=True)
@@ -96,6 +130,7 @@ class User(models.Model):
     profile_url = models.URLField(max_length=255, null=True, blank=True)
     enrollment_url = models.URLField(max_length=455, null=True, blank=True)
     course = models.URLField(max_length=455, null=True, blank=True)
+    is_new_user = models.CharField(max_length=10, choices=USER_IS_NEW)
 
     def __str__(self):
         return f'{self.full_name} ({self.username})'

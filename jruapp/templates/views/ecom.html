@@ -657,7 +657,22 @@
   </div>
     <!-- CSRF Token -->
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
-
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const container = document.querySelector(".product-container");
+        const products = Array.from(container.querySelectorAll(".product"));
+    
+        // Fisher-Yates shuffle
+        for (let i = products.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [products[i], products[j]] = [products[j], products[i]];
+        }
+    
+        // Remove current products and append them in shuffled order
+        products.forEach(product => container.appendChild(product));
+      });
+    </script>
+    
     <script>
     
 
