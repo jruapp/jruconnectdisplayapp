@@ -156,6 +156,8 @@ def home(request):
     full_name = request.session.get('full_name', 'Guest')
     admin_id = request.session.get('admin_id', '0')
     role = request.session.get('role', '')
+    if role != 'admin':
+        return redirect('advertisements')
 
     # Fetch data from the database
     view_engagements_by_type = ViewEngagementsByType.objects.all()
@@ -268,7 +270,9 @@ def register(request):
             user = User(
                 stud_id=request.POST.get('user_id'),
                 username=request.POST.get('username'),
-                full_name=request.POST.get('full_name'),
+                first_name=request.POST.get('first_name'),
+                middle_name=request.POST.get('middle_name'),
+                last_name=request.POST.get('last_name'),
                 email=request.POST.get('email'),
                 password_hash=request.POST.get('password'),  # Hash the password appropriately
                 course=request.POST.get('role'),

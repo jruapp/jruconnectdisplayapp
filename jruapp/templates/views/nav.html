@@ -12,12 +12,14 @@
             <p>Home</p>
             <span></span>
         </li>
+        {% if role == "admin" %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'home' %}">
                 <i class="mdi mdi-home menu-icon"></i>
                 <span class="menu-title">Home</span>
             </a>
         </li>
+        {% endif %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'advertisements' %}">
                 <i class="mdi mdi-cart menu-icon"></i>
@@ -34,6 +36,7 @@
        
        
     
+        {% if role == "admin" %}
         <li class="nav-item sidebar-category">
             <p>Management</p>
             <span></span>
@@ -50,7 +53,6 @@
                 </ul>
             </div>
         </li>
-        {% if role == "admin" %}
         <li class="nav-item">
             <a class="nav-link" href="{% url 'products' %}">
                 <i class="mdi mdi-box menu-icon"></i>
