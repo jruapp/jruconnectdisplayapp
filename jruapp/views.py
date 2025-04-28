@@ -645,8 +645,6 @@ def ecom(request):
     # Fetch recommended products based on engaged categories (excluding products already engaged with)
     recommended_products = Product.objects.filter(
         category__in=engaged_categories
-    ).exclude(
-        engagement__user_id=admin_id
     ).select_related('user').distinct().annotate(
         avg_rating=Subquery(rating_subquery)
     )
