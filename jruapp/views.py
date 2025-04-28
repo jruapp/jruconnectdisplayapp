@@ -283,7 +283,7 @@ def register(request):
             )
             user.save()
 
-            return redirect('student')  # Redirect after successful registration
+            return redirect('login')  # Redirect after successful registration
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     email_user = "na"
