@@ -278,6 +278,7 @@ def register(request):
                 course=request.POST.get('role'),
                 role="student",
                 verified=request.POST.get('verified') == 'on',
+                is_new_user="yes",
                 profile_url=profile_image_url,
                 enrollment_url=enrollment_form_url
             )
