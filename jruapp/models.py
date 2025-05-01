@@ -62,6 +62,49 @@ class ViewEngagementsByType(models.Model):
         db_table = 'view_engagements_by_type'
 
 
+class ProductEngagementView(models.Model):
+    product_id = models.IntegerField(default=0)
+    product_user_id = models.IntegerField(null=True, blank=True)
+    product_title = models.CharField(max_length=455)
+    product_description = models.TextField()
+    product_category = models.CharField(max_length=100, null=True, blank=True)
+    product_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    product_stock = models.IntegerField(null=True, blank=True)
+    product_location = models.CharField(max_length=255, null=True, blank=True)
+    product_image_url = models.CharField(max_length=255, null=True, blank=True)
+    product_ads_url = models.CharField(max_length=455)
+    product_is_sold = models.BooleanField(default=False)
+    product_date_posted = models.DateTimeField(auto_now_add=True)
+    product_ads_status = models.CharField(
+        max_length=50, 
+        choices=[
+            ('on_review', 'On Review'),
+            ('restricted', 'Restricted'),
+            ('deleted', 'Deleted'),
+            ('approved', 'Approved')
+        ],
+        default='on_review'
+    )
+    product_restriction_reason = models.CharField(max_length=455, null=True, blank=True)
+    engagement_id = models.IntegerField(default=0)
+    engagement_user_id = models.IntegerField(null=True, blank=True)
+    engagement_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('like', 'Like'),
+            ('click', 'Click')
+        ],
+        null=True, blank=True
+    )
+    engagement_date_created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'product_engagement_view'
+
+    def __str__(self):
+        return self.product_title
+    
 class ViewFeedbackByRating(models.Model):
     year = models.IntegerField()
     month = models.IntegerField()

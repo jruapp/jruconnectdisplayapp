@@ -227,7 +227,7 @@
                                                                         <img src="{% if user.profile_url %}{% static user.profile_url %}{% else %}{% static 'images/default.png' %}{% endif %}" class="rounded-circle mr-1" alt="Chat Header" width="40" height="40">
                                                                     </div>
                                                                     <div class="flex-grow-1 pl-3">
-                                                                        <strong>{{ admin_user.first_name }} {{ admin_user.middle_name }} {{ admin_user.last_name }} ({{ admin_user.email }}) </strong>
+                                                                        <strong> {{ receiver_info.user.first_name }} {{ receiver_info.middle_name }} {{ receiver_info.last_name }} ({{ receiver_info.email }}) </strong>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -356,10 +356,7 @@
                         });
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while sending the message');
-                });
+            
             });
         });
     </script>

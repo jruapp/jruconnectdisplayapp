@@ -521,8 +521,6 @@
                       <div class="card-body">
                         
                         <div class="text-center">
-                          {% for engagement in all_eng %}{% if product.product_id == engagement.product_id and engagement.type == 'like' and engagement.user_id == admin_id %}<p class=" text-right" ><i class="mdi mdi-heart text-danger"  style="font-size: 2em;"></i></p>{% endif %}{% endfor %}
-                          <br>
                           <div id="carouselExampleControls{{ product.product_id }}" class="carousel slide" data-ride="carousel">
                                 <div class="carousel-inner">
                                   <div class="carousel-item active">

@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import logout
 from jruconnect import settings
-from .models import RandomProductPerCategory, TopRatedProduct, AvailedProductDetailsView, AvailedProduct, UserMessagesView, AllProductsRatings, Product, User, Engagement, Feedback, Message, Profile, SupportInquiry, ProductEngagementSummary, ViewEngagementsByType, ViewProductEngagementOverTime, ViewFeedbackByRating, ViewSupportInquiriesByStatus, UserLikes, UserProductFeedbackView, Top5ProductLikes, Top5ProductViews, Top5ProductRatings, Top5CombinedProducts, TopProductsAll
+from .models import ProductEngagementView, RandomProductPerCategory, TopRatedProduct, AvailedProductDetailsView, AvailedProduct, UserMessagesView, AllProductsRatings, Product, User, Engagement, Feedback, Message, Profile, SupportInquiry, ProductEngagementSummary, ViewEngagementsByType, ViewProductEngagementOverTime, ViewFeedbackByRating, ViewSupportInquiriesByStatus, UserLikes, UserProductFeedbackView, Top5ProductLikes, Top5ProductViews, Top5ProductRatings, Top5CombinedProducts, TopProductsAll
 import json
 import os
 from django.db.models import Q
@@ -643,11 +643,7 @@ def ecom(request):
     ).values_list('product__category', flat=True).distinct()
 
     # Fetch recommended products based on engaged categories (excluding products already engaged with)
-    recommended_products = Product.objects.filter(
-        category__in=engaged_categories
-    ).select_related('user').distinct().annotate(
-        avg_rating=Subquery(rating_subquery)
-    )
+    recommended_products = ProductEngagementView.objects.filter(engagement_user_id=admin_id)
 
     # Get a list of product IDs that are either in top products or recommended products
     excluded_product_ids = list(top_products.values_list('product_id', flat=True)) + \
@@ -692,8 +688,16 @@ def ecom_top(request):
             admin_user = None  # Handle case where no admin user is found
 
 
+    # Subquery to get the avg_rating from AllProductsRatings
+    rating_subquery = AllProductsRatings.objects.filter(
+        product_id=OuterRef('product_id')
+    ).values('avg_rating')[:1]
+
     # Count likes for each product, order by likes, and select the top 20 unique products
-    top_products = TopRatedProduct.objects.all()
+    top_products = Product.objects.annotate(
+        like_count=Count('engagement', filter=Q(engagement__type='like')),
+        avg_rating=Subquery(rating_subquery)
+    ).select_related('user').order_by('-like_count')[:20]
 
     
 
@@ -1130,6 +1134,7 @@ def chat_message(request, user_id):
     # Separate users into senders and receivers
     senders = User.objects.filter(user_id=admin_id).distinct()
     receivers = User.objects.filter(user_id=user_id).distinct()
+    receiver_info = User.objects.filter(user_id=user_id).first()
     sender_id = admin_id
     
     receiver_id = user_id
@@ -1143,6 +1148,7 @@ def chat_message(request, user_id):
         'senders': senders,
         'role': role,
         'receivers': receivers,
+        'receiver_info' :receiver_info,
         'users': users,
         'full_name': full_name,
         'admin_id': admin_id,
