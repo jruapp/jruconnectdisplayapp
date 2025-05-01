@@ -208,6 +208,7 @@
                               <form method="post">
                               {% csrf_token %}
                                 <input type="text" value="{{ availed.product_id }}" style="display: none;">
+                                <input type="text" name="user_id" value="{{ availed.availed_user_id }}" style="display: none;">
                                 <button type="submit" class="btn btn-success" name="approve"> Approve  </button>
                               </form>
                               {% endif %}
@@ -219,6 +220,7 @@
                               <form method="post">
                               {% csrf_token %}
                                 <input type="text" value="{{ availed.product_id }}" style="display: none;">
+                                <input type="text" name="user_id" value="{{ availed.availed_user_id }}" style="display: none;">
                                 <button type="submit" class="btn btn-success" name="approve"> Approve  </button>
                               </form>
                               </div>
@@ -226,6 +228,7 @@
                               <form method="post">
                               {% csrf_token %}
                                 <input type="text" value="{{ availed.product_id }}" style="display: none;">
+                                <input type="text" name="user_id" value="{{ availed.availed_user_id }}" style="display: none;">
                                 <button type="submit" class="btn btn-danger" name="decline"> Decline  </button>
                               </form>
 

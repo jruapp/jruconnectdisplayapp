@@ -209,8 +209,8 @@
                           <div class="carousel-item {% if forloop.first %}active{% endif %}">
                             <div class="row">
                               {% for product in group %}
-                                <div class="col-md-4">
-                                  <div class="card m-2 mb-5" style="width: 90%;">
+                                <div class="col-md-4" >
+                                  <div class="card m-4 mb-5" style="width: 90%;">
                                    
                                     <div class="card-body">
                                       <h4 class=" mb-3"><u>{{ product.category_name }}</u></h4>
@@ -243,11 +243,11 @@
                         {% endfor %}
                       </div>
                     
-                      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev" style="margin-left: -90px;">
+                      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev" style="margin-left: -10%;">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="sr-only">Previous</span>
                       </a>
-                      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next" style="margin-right: -90px;">
+                      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next" style="margin-right: -10%;">
                         <span class="carousel-control-next-icon" aria-hidden="true" ></span>
                         <span class="sr-only">Next</span>
                       </a>

@@ -764,10 +764,13 @@ display: inline-block;
         })
         .then(data => {
             console.log('Success:', data);
+            
         })
         .catch(error => {
             console.error('Error:', error);
         });
+      window.location.href= window.location.href;
+
     }
   function addFeedback() {
       const user = document.getElementById("new_user").value;

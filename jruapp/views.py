@@ -869,7 +869,9 @@ def product_avails(request, product_id):
 
 
     if request.method == "POST":
-        availed_product = AvailedProduct.objects.filter(product_id=product_id).first()
+        user_id = request.POST.get("user_id")
+
+        availed_product = AvailedProduct.objects.filter(product_id=product_id, user_id=user_id).first()
         if availed_product:  # Ensure the object exists before updating
             if "approve" in request.POST:
                 availed_product.status = 'approved'
