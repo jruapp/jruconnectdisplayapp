@@ -8,6 +8,9 @@ urlpatterns = [
     path('home', views.home, name='home'),
     path('products/', views.products, name='products'),
     path('products_student/', views.products_student, name='products_student'),
+    
+    path('update_product_image/<int:product_id>/', views.update_product_image, name='update_product_image'),
+    path('update_product_ads/<int:product_id>/', views.update_product_ads, name='update_product_ads'),
     path('user_profile/<int:user_profile_id>/', views.user_profile, name='user_profile'),
     path('view_product/<int:product_id>/', views.view_product, name='view_product'),
     path('login/', views.login, name='login'),
@@ -29,6 +32,7 @@ urlpatterns = [
     path('google-login-handler/', views.google_login_handler, name='google_login_handler'),
     path('oauth/', include('social_django.urls', namespace='social')),
     path('auth/', include('social_django.urls', namespace='social')),  # This includes the social auth URLs
+
     
     path('forgot_password/', views.request_otp, name='forgot_password'),
     path('google_logout/', views.google_logout, name='google_logout'),

@@ -234,6 +234,8 @@
                             alt="{{ product.title }}"  class="d-block w-400 image-hover" />
                           <hr>
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lgimg-{{ product.product_id }}">View Image</button>
+<hr>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-mainimg-{{ product.product_id }}">Re-Upload Image</button>
 
                           </td>
                             <td><img src="{% if product.ads_url %}
@@ -247,6 +249,8 @@
                             alt="{{ product.title }}"  class="d-block w-400 " />
                             <hr>
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lgads-{{ product.product_id }}">View Image</button>
+<hr>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-adsimg-{{ product.product_id }}">Re-Upload Image</button>
                           </td>
                           {% if product.ads_status != "restricted" %}
 
@@ -781,6 +785,36 @@ aria-hidden="true"
   {% for product in products %}
 
 
+  <div class="modal fade bd-example-modal-mainimg-{{ product.product_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content p-5">
+        <form id="updateImageForm" method="POST" enctype="multipart/form-data" action="/update_product_image/{{ product.product_id }}/">
+          {% csrf_token %}
+          <label for="image">Upload File of Image:</label>
+          <input type="file" class="form-control" id="image" name="image" accept="image/*"  required>
+          <hr>
+          <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade bd-example-modal-adsimg-{{ product.product_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content p-5">
+        <form id="updateAdsForm" method="POST" enctype="multipart/form-data" action="/update_product_ads/{{ product.product_id }}/">
+          <label for="ads">Upload File of Advertisement:</label>
+          <input type="file" class="form-control" id="ads" name="ads" accept="image/*"  required>
+          <hr>
+          <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
   <div class="modal fade bd-example-modal-lgimg-{{ product.product_id }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -870,6 +904,36 @@ aria-hidden="true"
             filterItems();
           });
         });
+
+
+        function updateProductImage(productId, fileInputId) {
+          const formData = new FormData();
+          const file = document.getElementById(fileInputId).files[0];
+          formData.append('image', file);
+      
+          fetch(`/update_product_image/${productId}/`, {
+              method: "POST",
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => alert(data.message))
+          .catch(error => console.error("Error:", error));
+      }
+      
+      function updateProductAds(productId, fileInputId) {
+          const formData = new FormData();
+          const file = document.getElementById(fileInputId).files[0];
+          formData.append('ads', file);
+      
+          fetch(`/update_product_ads/${productId}/`, {
+              method: "POST",
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => alert(data.message))
+          .catch(error => console.error("Error:", error));
+      }
+      
       </script>
       
       

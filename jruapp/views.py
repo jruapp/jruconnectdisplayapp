@@ -849,6 +849,72 @@ def add_product(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
 
+
+@csrf_exempt
+def update_product_image(request, product_id):
+    role = request.session.get('role', '')
+    if request.method == 'POST':
+        try:
+            product = Product.objects.get(product_id=product_id)
+            new_image = request.FILES.get('image')
+
+            if not new_image:
+                return JsonResponse({'status': 'error', 'message': 'No image file provided.'})
+
+            image_url = save_image(new_image, product.title)
+            product.image_url = image_url
+            product.save()
+            if role == "admin":
+                return redirect("products")
+            elif role == "student":
+                return redirect("products_student")
+        except Product.DoesNotExist:
+            if role == "admin":
+                return redirect("products")
+            elif role == "student":
+                return redirect("products_student")
+        except Exception as e:
+            if role == "admin":
+                return redirect("products")
+            elif role == "student":
+                return redirect("products_student")
+
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+
+@csrf_exempt
+def update_product_ads(request, product_id):
+    role = request.session.get('role', '')
+    if request.method == 'POST':
+        try:
+            product = Product.objects.get(product_id=product_id)
+            new_ads = request.FILES.get('ads')
+
+            if not new_ads:
+                return JsonResponse({'status': 'error', 'message': 'No ads image file provided.'})
+
+            ads_url = save_image(new_ads, product.title)
+            product.ads_url = ads_url
+            product.save()
+            if role == "admin":
+                return redirect("products")
+            elif role == "student":
+                return redirect("products_student")
+        except Product.DoesNotExist:
+            if role == "admin":
+                return redirect("products")
+            elif role == "student":
+                return redirect("products_student")
+        except Exception as e:
+            if role == "admin":
+                return redirect("products")
+            elif role == "student":
+                return redirect("products_student")
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+
 def product_avails(request, product_id):
     full_name = request.session.get('full_name', 'Guest')
     admin_id = request.session.get('admin_id', '0')

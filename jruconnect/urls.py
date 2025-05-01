@@ -10,6 +10,9 @@ urlpatterns = [
     path('adminlog/', views.loginadmin, name='adminlog'),
     path('student/', views.loginstud, name='student'),
     path('products_student/', views.products_student, name='products_student'),
+    
+    path('update_product_image/<int:product_id>/', views.update_product_image, name='update_product_image'),
+    path('update_product_ads/<int:product_id>/', views.update_product_ads, name='update_product_ads'),
     path('products/', views.products, name='products'),
     path('view_product/<int:product_id>/', views.view_product, name='view_product'),
     path('delete_product/<int:product_id>/', views.delete_product, name='delete_product'),
@@ -69,6 +72,9 @@ urlpatterns = [
     path('product_avails/<int:product_id>', views.product_avails, name='product_avails'),
     path('oauth/', include('social_django.urls', namespace='social')),
     path('auth/', include('social_django.urls', namespace='social')),  # This includes the social auth URLs
+    path('update_product_image/<int:product_id>/', views.update_product_image, name='update_product_image'),
+    path('update_product_ads/<int:product_id>/', views.update_product_ads, name='update_product_ads'),
+
     
        # Data fetching URLs
     path('google-login/<str:process>', views.google_login, name='google_login'),
