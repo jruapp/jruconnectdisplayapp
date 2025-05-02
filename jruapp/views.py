@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import logout
 from jruconnect import settings
-from .models import ProductEngagementView, RandomProductPerCategory, TopRatedProduct, AvailedProductDetailsView, AvailedProduct, UserMessagesView, AllProductsRatings, Product, User, Engagement, Feedback, Message, Profile, SupportInquiry, ProductEngagementSummary, ViewEngagementsByType, ViewProductEngagementOverTime, ViewFeedbackByRating, ViewSupportInquiriesByStatus, UserLikes, UserProductFeedbackView, Top5ProductLikes, Top5ProductViews, Top5ProductRatings, Top5CombinedProducts, TopProductsAll
+from .models import FullProductInfoWithRating, ProductEngagementView, RandomProductPerCategory, TopRatedProduct, AvailedProductDetailsView, AvailedProduct, UserMessagesView, AllProductsRatings, Product, User, Engagement, Feedback, Message, Profile, SupportInquiry, ProductEngagementSummary, ViewEngagementsByType, ViewProductEngagementOverTime, ViewFeedbackByRating, ViewSupportInquiriesByStatus, UserLikes, UserProductFeedbackView, Top5ProductLikes, Top5ProductViews, Top5ProductRatings, Top5CombinedProducts, TopProductsAll
 import json
 import os
 from django.db.models import Q
@@ -625,16 +625,10 @@ def ecom(request):
         except User.DoesNotExist:
             admin_user = None  # Handle case where no admin user is found
 
-    # Subquery to get the avg_rating from AllProductsRatings
-    rating_subquery = AllProductsRatings.objects.filter(
-        product_id=OuterRef('product_id')
-    ).values('avg_rating')[:1]
 
     # Count likes for each product, order by likes, and select the top 20 unique products
-    top_products = Product.objects.annotate(
-        like_count=Count('engagement', filter=Q(engagement__type='like')),
-        avg_rating=Subquery(rating_subquery)
-    ).select_related('user').order_by('-like_count')[:20]
+    top_products = FullProductInfoWithRating.objects.order_by('-avg_rating')[:20]
+
 
     # Fetch categories of products that the admin has engaged with (liked or clicked)
     engaged_categories = Engagement.objects.filter(
@@ -642,24 +636,25 @@ def ecom(request):
         type__in=['like', 'click']
     ).values_list('product__category', flat=True).distinct()
 
-    # Fetch recommended products based on engaged categories (excluding products already engaged with)
-    recommended_products = ProductEngagementView.objects.filter(engagement_user_id=admin_id)
+    # Step 2: Use the summary view to fetch related products with like counts
+    related_products = FullProductInfoWithRating.objects.filter(
+        category__in=engaged_categories
+    ).order_by('-likes_count')  # Optional: sort by popularity
+
+
 
     # Get a list of product IDs that are either in top products or recommended products
-    excluded_product_ids = list(top_products.values_list('product_id', flat=True)) + \
-                           list(recommended_products.values_list('product_id', flat=True))
+    excluded_product_ids = list(top_products.values_list('product_id', flat=True)) 
 
     # Fetch products that are not in top products and recommended products
-    other_products = Product.objects.exclude(
+    other_products = FullProductInfoWithRating.objects.exclude(
         product_id__in=excluded_product_ids
-    ).select_related('user').annotate(
-        avg_rating=Subquery(rating_subquery)
     )
 
     # Pass top products, recommended products, and other products to the template
     context = {
         'top_products': top_products,
-        'recommended_products': recommended_products,
+        'related_products' : related_products,
         'other_products': other_products,
         'full_name': full_name,
         'admin_id': admin_id,
@@ -689,15 +684,7 @@ def ecom_top(request):
 
 
     # Subquery to get the avg_rating from AllProductsRatings
-    rating_subquery = AllProductsRatings.objects.filter(
-        product_id=OuterRef('product_id')
-    ).values('avg_rating')[:1]
-
-    # Count likes for each product, order by likes, and select the top 20 unique products
-    top_products = Product.objects.annotate(
-        like_count=Count('engagement', filter=Q(engagement__type='like')),
-        avg_rating=Subquery(rating_subquery)
-    ).select_related('user').order_by('-like_count')[:20]
+    top_products = FullProductInfoWithRating.objects.order_by('-avg_rating')[:20]
 
     
 

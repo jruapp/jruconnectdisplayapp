@@ -18,7 +18,27 @@ class ProductEngagementSummary(models.Model):
         managed = False
         db_table = 'product_engagement_summary'
         
-        
+class FullProductInfoWithRating(models.Model):
+    row_num = models.BigIntegerField(primary_key=True)
+    product_id = models.IntegerField()
+    user_id = models.IntegerField(null=True)
+    title = models.CharField(max_length=455)
+    description = models.TextField()
+    stock = models.IntegerField(null=True)
+    category = models.CharField(max_length=100, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    location = models.CharField(max_length=255, null=True)
+    image_url = models.CharField(max_length=255, null=True)
+    ads_url = models.CharField(max_length=455)
+    ads_status = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    date_posted = models.DateTimeField(null=True)
+    purchase_count = models.BigIntegerField(null=True)
+    likes_count = models.BigIntegerField(null=True)
+    avg_rating = models.DecimalField(max_digits=14, decimal_places=4, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'product_summary_with_rating'
 
 class RandomProductPerCategory(models.Model):
     product_id = models.IntegerField()

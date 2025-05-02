@@ -389,13 +389,13 @@
                               <h6>PHP {{ product.price }}</h6>
                             </div>
                             <div class="p-2 mr-2" style="border: 1px solid darkred; color: darkred; font-size: 13px; height: 35px;">
-                              <i class="mdi mdi-heart"></i> <strong>{{ product.like_count }} Likes</strong>
+                              <i class="mdi mdi-heart"></i> <strong>{{ product.likes_count }} Likes</strong>
                             </div>
 
 
                             {% for engagement in all_eng %}{% if product.product_id == engagement.product_id and engagement.type == 'like' and engagement.user_id == admin_id %}
                           <div class="p-2" style="border: 1px solid darkblue; font-size: 13px; height: 35px;">
-                            <strong><i class="mdi mdi-thumb-up"></i> {{ product.purchase_count }} Liked</strong>
+                            <strong><i class="mdi mdi-thumb-up"></i> Liked</strong>
                           </div>
                           {% endif %}{% endfor %}
                            
@@ -485,11 +485,11 @@
                               <h6>PHP {{ product.price }}</h6>
                             </div>
                             <div class="p-2 mr-2" style="border: 1px solid darkred; color: darkred; font-size: 13px; height: 35px;">
-                              <i class="mdi mdi-heart"></i> <strong>{{ product.like_count }} Likes</strong>
+                              <i class="mdi mdi-heart"></i> <strong>{{ product.likes_count }} Likes</strong>
                             </div>
                             {% for engagement in all_eng %}{% if product.product_id == engagement.product_id and engagement.type == 'like' and engagement.user_id == admin_id %}
                           <div class="p-2" style="border: 1px solid darkblue; font-size: 13px; height: 35px;">
-                            <strong><i class="mdi mdi-thumb-up"></i> {{ product.purchase_count }} Liked</strong>
+                            <strong><i class="mdi mdi-thumb-up"></i> Liked</strong>
                           </div>
                           {% endif %}{% endfor %}
                            
@@ -566,11 +566,11 @@
                             <h6>PHP {{ product.price }}</h6>
                           </div>
                           <div class="p-2 mr-2" style="border: 1px solid darkred; color: darkred; font-size: 13px; height: 35px;">
-                            <i class="mdi mdi-heart"></i> <strong>{{ product.like_count }} Likes</strong>
+                            <i class="mdi mdi-heart"></i> <strong>{{ product.likes_count }} Likes</strong>
                           </div>
                           {% for engagement in all_eng %}{% if product.product_id == engagement.product_id and engagement.type == 'like' and engagement.user_id == admin_id %}
                           <div class="p-2" style="border: 1px solid darkblue; font-size: 13px; height: 35px;">
-                            <strong><i class="mdi mdi-thumb-up"></i> {{ product.purchase_count }} Liked</strong>
+                            <strong><i class="mdi mdi-thumb-up"></i> Liked</strong>
                           </div>
                           {% endif %}{% endfor %}
                           
