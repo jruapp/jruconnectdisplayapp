@@ -519,7 +519,7 @@ def view_product(request, product_id):
         category = None
 
     # Fetch products that belong to the same category
-    products = ProductEngagementSummary.objects.filter(category=category) if category else []
+    products = FullProductInfoWithRating.objects.filter(category=category) if category else []
 
     # Fetch product engagement details (e.g., likes)
     engagement_summary = ProductEngagementSummary.objects.filter(product_id=product_id)

@@ -409,9 +409,7 @@
 
                             </div>
                           </div>
-                          {% if product.is_sold == 0 %}
                           <button type="button" class="btn btn-primary w-100"  onclick="recordEngagement({{ product.product_id }}, 'click')"><i class="mdi mdi-eye"></i> VIEW</button>
-                          {% endif %}
                           
                           {% if product.is_sold == 1 %}
                           <button type="button" class="btn btn-danger w-100"  disabled><i class="mdi mdi-cart-off"></i> PRODUCT IS SOLD</button>
